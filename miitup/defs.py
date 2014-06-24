@@ -1,0 +1,4 @@
+PACKAGE_ROOT = 'miitup.srv'
+TORNADO_CONFIG_PREFIX = 'TORNADO_'
+INDEX_PAGE = 'index.html'
+STATIC_URL_PREFIX = '/s/'
