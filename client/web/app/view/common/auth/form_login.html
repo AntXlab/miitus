@@ -1,0 +1,25 @@
+<div class="op-row" ng-controller="ctrl_auth_session">
+  <form class="form-inline col-lg-12" ng-if="err_msg.length == 0">
+    <input type="email" class="form-control" id="login_email" placeholder="Email" ng-model="user.email">
+    <input type="password" class="form-control" id="login_passwd" placeholder="Password" ng-model="user.password">
+    <input type="submit" class="btn btn-login from-control" value="Log In" id="login_submit" ng-click="login()">
+  </form>
+  <div class="col-lg-12" ng-if="err_msg.length != 0">
+    <div class="op-row">
+      <div class="col-lg-8 warning-box">
+        {{ err_msg }}
+      </div>
+      <div class="col-lg-4">
+        <button type="button" class="btn btn-login" ng-click="dismiss()">Got it!</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="op-row" ng-controller="ctrl_auth_session"><div class="col-lg-12">
+  <span>Or login from:&nbsp;</span>
+  <div class="btn-group">
+    <button type="button" class="btn btn-facebook" ng-click="oauth('facebook')">F</button>
+    <button type="button" class="btn btn-google" ng-click="oauth('google')">G</button>
+  </div>
+  <span>,&nbsp;Or <a ui-sref="anony.sign_up">Sign Up</a> Now</span>
+</div></div>

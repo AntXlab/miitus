@@ -1,0 +1,78 @@
+@import "bootstrap-sass/lib/bootstrap";
+
+// Social Color
+$color-fb-blue:       #48649F;
+$color-fb-green:      #69A74E;
+$color-ggl-red:       #E46145;
+
+// color used by ourself
+$color-fg-default:    #FF7538;
+
+// padding for grid
+$grid_gutter: 5px;
+
+// content color
+$color-view: #2C3E50;
+$color-footer: #9B59B6;
+$color-content: #34495E;
+
+
+// buttons
+.btn-facebook {
+    @include button-variant(white, $color-fb-blue, $btn-default-border);
+}
+
+.btn-google {
+    @include button-variant(white, $color-ggl-red, $btn-default-border);
+}
+
+.btn-login {
+    @include button-variant(white, $color-fb-green, $btn-default-border);
+}
+
+.op-row{
+    @extend .row;
+
+    margin-top: $grid_gutter;
+    margin-bottom: $grid_gutter;
+}
+
+.dev {
+//    border-width: 2px;
+//    border-style: double;
+//    border-color: red;
+}
+
+.header-fix-height-50 {
+    height: $navbar-height;
+}
+
+.header-fix-height-82 {
+    height: 82px;
+}
+
+.content {
+    background-color: $color-content;
+    padding-bottom: 10px;
+}
+
+.warning-box {
+    background-color: $color-view;
+    color: #E74C3C;
+    height: $input-height-base;
+}
+
+.fill-height {
+    min-height: 100%;
+    height: 100%;
+}
+
+.view {
+    @extend .fill-height;
+
+    background-color: $color-view;
+}
+
+.pad {
+    padding: 50px;
+}

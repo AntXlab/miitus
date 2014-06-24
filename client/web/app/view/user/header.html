@@ -1,0 +1,29 @@
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="navbar-header">
+    <a class="navbar-brand" href="">OPair</a>
+  </div>
+
+  <ul class="nav navbar-nav navbar-right">
+    <li>
+      <form class="navbar-form navbar-left" role="search" ng-controller="ctrl_topic_search" ng-submit="search_title()">
+        <input type="text" class="form-control" placeholder="Search a topic" ng-model="search.keyword">
+        <!--
+          make this form accept 'enter' keypress, we need this hidden control.
+          refer to http://stackoverflow.com/questions/477691/submitting-a-form-by-pressing-enter-without-a-submit-button
+        -->
+        <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px; tabindex: -1;"/> 
+      </form>
+    </li>
+    <li><a href="" ng-controller="ctrl_topic_create_modal" ng-click="launch_modal()">New Topic</a></li>
+    <li class="dropdown">
+      <a class="dropdown-toggle">{{ user.email }} <b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a ui-sref="user.profile">Profile</a></li>
+        <li><a ui-sref="user.setting">Setting</a></li>
+        <li class="divider"></li>
+        <li><a href="" ng-controller="ctrl_auth_session" ng-click="logout()">Logout</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+

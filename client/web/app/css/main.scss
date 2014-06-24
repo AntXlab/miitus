@@ -1,0 +1,44 @@
+$iconSpritePath: "../images/glyphicons-halflings.png";
+$iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
+
+@import "override.scss";
+@import "bootstrap-sass/lib/bootstrap";
+@import "var.scss";
+
+/* Put your CSS here */
+body, html {
+    height: 100%;
+    background-color: black;
+    color: white;
+}
+
+#header {
+    width: 99%;
+    margin-left: auto;
+    margin-right: auto;
+
+    z-index: 6;
+
+    position: fixed;
+}
+
+#intro > ul {
+    font-weight: normal;
+    font-size: large;
+}
+
+#intro > ul > li > p {
+    font-weight: lighter;
+    font-style: italic;
+    font-size: small;
+}
+
+#login {
+    float: right;
+}
+
+#sign_up, #login_email, #login_passwd {
+    width: auto;
+}
+
+
