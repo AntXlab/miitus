@@ -1,4 +1,4 @@
-import miitup.defs
+import miitus.defs
 
 # celery
 CELERY_BROKER_URL = 'amqp://'
@@ -12,7 +12,7 @@ CQLENGINE_HOSTS = ['127.0.0.1']
 from .util import get_static_folder
 TORNADO_debug = True
 TORNADO_static_path = get_static_folder()
-TORNADO_static_url_prefix = miitup.defs.STATIC_URL_PREFIX 
+TORNADO_static_url_prefix = miitus.defs.STATIC_URL_PREFIX 
 
 # TODO: this part should be patched before deployment
 # security

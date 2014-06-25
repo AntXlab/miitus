@@ -1,4 +1,4 @@
-PACKAGE_ROOT = 'miitup.srv'
+PACKAGE_ROOT = 'miitus.srv'
 TORNADO_CONFIG_PREFIX = 'TORNADO_'
 INDEX_PAGE = 'index.html'
 STATIC_URL_PREFIX = '/s/'

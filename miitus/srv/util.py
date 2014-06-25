@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from werkzeug.utils import import_string
 from os import path
-import miitup.defs
+import miitus.defs
 import hashlib
 
 
@@ -27,7 +27,7 @@ class Config(Singleton, dict):
     """
     def __init__(self, package_name=None):
         # import default config
-        package_name = package_name or miitup.defs.PACKAGE_ROOT
+        package_name = package_name or miitus.defs.PACKAGE_ROOT
         config_name = package_name + '.config'
 
         self.from_object(config_name)
