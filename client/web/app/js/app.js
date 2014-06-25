@@ -208,12 +208,12 @@ define([
                     $state.go('user.about');
                 } else {
                     $rootScope.ui_state.login = false;
-                    $state.go('user.error');
+                    $state.go('anony.error');
                 }
             },
             function (err) {
                 $rootScope.ui_state.login = false;
-                $state.go('user.error');
+                $state.go('anony.error');
             }
         );
 
