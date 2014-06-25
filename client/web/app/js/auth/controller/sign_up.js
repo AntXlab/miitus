@@ -5,7 +5,8 @@ define(['angular'], function (ng) {
 
         $scope.submit_failed = false;
         $scope.err_msg = '';
-        $scope.country_name = '';
+        $scope.sign_up_info = {};
+        $scope.sign_up_info.country_name = '';
 
         $scope.submit_user = function () {
             $scope.submit_failed = false;
@@ -13,11 +14,11 @@ define(['angular'], function (ng) {
 
             var Users = RRestangular.all('users');
             Users.post({
-                email: $scope.email,
-                password: $scope.login_psswd,
-                gender: $scope.genders[$scope.gender_sel],
-                loc: countryInfo.get_code($scope.country_name),
-                bday: $scope.bday,
+                email: $scope.sign_up_info.email,
+                password: $scope.sign_up_info.login_psswd,
+                gender: $scope.sign_up_info.gender_sel,
+                loc: countryInfo.get_code($scope.sign_up_info.country_name),
+                bday: $scope.sign_up_info.bday,
             }).then(
                 function(data) {
                     $state.go('user.profile');
@@ -34,27 +35,27 @@ define(['angular'], function (ng) {
         };
 
         // Password
-        $scope.login_psswd = '';
+        $scope.sign_up_info.login_psswd = '';
         $scope.show_password_warning = false;
         $scope.check_psswd_strength = function () {
-            if (ng.isDefined($scope.login_psswd)) {
-                if ($scope.login_psswd.length > 8) {
+            if (ng.isDefined($scope.sign_up_info.login_psswd)) {
+                if ($scope.sign_up_info.login_psswd.length > 8) {
                     $scope.show_password_warning = false;
                 } else {
                     $scope.show_password_warning = true;
                 }
             }
         };
-        $scope.$watch('login_psswd', $scope.check_psswd_strength);
+        $scope.$watch('sign_up_info.login_psswd', $scope.check_psswd_strength);
 
         // gender
-        $scope.gender_sel = 0;
+        $scope.sign_up_info.gender_sel = 0;
         $scope.genders = ['Gender', 'male', 'female', 'bisexual', 'none'];
         $scope.select_gender = function (idx) {
             if (idx <= 0 || idx >= $scope.genders.length) {
                 throw 'invalid index for gender [' + idx + ']';
             }
-            $scope.gender_sel = idx;
+            $scope.sign_up_info.gender_sel = idx;
         };
 
         $scope.$apply();

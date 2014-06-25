@@ -6,17 +6,17 @@
   <form id="sign_up" name="sign_up" class="dev op-col-12 form" ng-controller="ctrl_auth_sign_up" ng-submit="submit_user()">
     <div class="form-group">
       <label>Email</label>
-      <input type="email" name="email" class="form-control" placeholder="Email address" ng-model="email" ng-blur="validate()" required>
+      <input type="email" name="email" class="form-control" placeholder="Email address" ng-model="sign_up_info.email" ng-blur="validate()" required>
     </div>
     <div class="form-group">
       <label>Password</label>
-      <input name="login_psswd" type="password" class="form-control" placeholder="Your Password" ng-model="login_psswd">
+      <input name="login_psswd" type="password" class="form-control" placeholder="Your Password" ng-model="sign_up_info.login_psswd">
     </div>
     <div class="form-group">
       <div class="btn-group">
         <label>Gender</label>
         <button type="button" class="btn btn-default dropdown-toggle form-control" data-toggle="dropdown">
-          {{ genders[gender_sel] }} <span class="caret"></span>
+          {{ genders[sign_up_info.gender_sel] }} <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
           <li ng-repeat="gender in genders.slice(1)">
@@ -27,11 +27,11 @@
     </div>
     <div class="form-group" ng-controller="ctrl_common_country">
       <label>Country</label>
-      <input type="text" class="form-control" ng-model="country_name" typeahead="n for n in name_list | filter:$viewValue | limitTo:4">
+      <input type="text" class="form-control" ng-model="sign_up_info.country_name" typeahead="n for n in name_list | filter:$viewValue | limitTo:4">
     </div>
     <div class="form-group">
       <label>B-Day</label>
-      <input type="date" value="Birthday" class="form-control" placeholder="Birthday" ng-model="bday" ng-blur="validate()" required>
+      <input type="date" value="Birthday" class="form-control" placeholder="Birthday" ng-model="sign_up_info.bday" ng-blur="validate()" required>
     </div>
     <div class="row">
       <div class="col-lg-3">
