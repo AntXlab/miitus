@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from werkzeug.utils import import_string
 from os import path
 import miitup.defs
+import hashlib
 
 
 class _Singleton(type):
@@ -52,4 +53,18 @@ class Config(Singleton, dict):
 
 def get_static_folder():
     return path.join(path.join(path.join(path.dirname(path.dirname(path.dirname(__file__))), 'client'), 'web'), 'app')
+
+
+class Hasher(object):
+    """
+    man doing hash
+    """
+    def __init__(self, key):
+        self.__key = key
+
+    def __call__(data):
+        m = hashlib.sha1()
+        m.update(data)
+        m.update(self.__key)
+        return m.hexdigest()
 

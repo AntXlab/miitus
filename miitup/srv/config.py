@@ -14,3 +14,8 @@ TORNADO_debug = True
 TORNADO_static_path = get_static_folder()
 TORNADO_static_url_prefix = miitup.defs.STATIC_URL_PREFIX 
 
+# TODO: this part should be patched before deployment
+# security
+_2PATCH_TOKEN_SECRET_KEY = '?\xbf,\xb4\x8d\xa3"<\x9c\xb0@\x0f5\xab,w\xee\x8d$0\x13\x8b83'
+_2PATCH_HASH_SECRET_KEY = '?\xbe,\xb3\x8d\xa3"<\x9c\xb0@\x0f5\xab,w\xee\x8d$0\x13\x8b82'
+
