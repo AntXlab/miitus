@@ -3,7 +3,7 @@ from tornado.web import RequestHandler
 import miitup.defs
 
 
-class RootHandler(RequestHandler):
+class Root(RequestHandler):
     """
     when accessing root: '/'
     """
