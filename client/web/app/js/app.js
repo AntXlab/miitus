@@ -203,11 +203,17 @@ define([
         var user = ApiRestangular.one('users/login/');
         user.get().then(
             function (data) {
-                $rootScope.user.email = data.email;
-                $state.go('user.about');
+                if (!!data) {
+                    $rootScope.user.email = data.email;
+                    $state.go('user.about');
+                } else {
+                    $rootScope.ui_state.login = false;
+                    $state.go('user.error');
+                }
             },
             function (err) {
                 $rootScope.ui_state.login = false;
+                $state.go('user.error');
             }
         );
 
