@@ -1,10 +1,12 @@
 from celery import Celery
 from cqlengine import connection
-from .util import Singleton, Config
+from itsdangerous import URLSafeTimedSerializer
+from .util import Singleton, Config, Hasher
 
 
 class Core(Singleton):
     """
+    containing everything needs one-time initialization
     """
     def __init__(self):
         """
@@ -19,10 +21,28 @@ class Core(Singleton):
 
         connection.setup(hosts=c['CQLENGINE_HOSTS'])
 
+        self.__serializer = URLSafeTimedSerializer(c['TOKEN_SECRET_KEY'])
+
+        self.__hasher = Hasher(c['HASH_SECRET_KEY'])
+
     @property
     def celery(self):
         """
         get celery app
         """
         return self.__app
+
+    @property
+    def serializer(self):
+        """
+        get serializer
+        """
+        return self.__serializer
+    
+    @property
+    def hasher(self):
+        """
+        get hasher
+        """
+        return self.__hasher
 
