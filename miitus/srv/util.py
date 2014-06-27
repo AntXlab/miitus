@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from werkzeug.utils import import_string
 from os import path
+from tornado.ioloop import IOLoop
 import miitus.defs
 import hashlib
 
@@ -67,4 +68,22 @@ class Hasher(object):
         m.update(data)
         m.update(self.__key)
         return m.hexdigest()
+
+
+class CeleryResultMixin(object):
+    """
+    Helper for checking celery result asynchrounsly.
+
+    please refer to
+        http://stackoverflow.com/questions/8202282/tornado-celery-integration-hacks
+
+    for more details about 'why' of this class.
+    """
+
+    def wait_for_result(self, task, callback):
+        if task.ready():
+            callback(task.result)
+        else:
+            # TODO: different time-out value for each kind of task
+            IOLoop.instance().add_timeout(0.1, self.wait_for_result, task, callback)
 
