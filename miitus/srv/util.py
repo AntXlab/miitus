@@ -62,7 +62,7 @@ class Hasher(object):
     def __init__(self, key):
         self.__key = key
 
-    def __call__(data):
+    def __call__(self, data):
         m = hashlib.sha1()
         m.update(data)
         m.update(self.__key)
