@@ -1,6 +1,12 @@
 from __future__ import absolute_import
 from tornado.web import RequestHandler
-from .base import Base, Json
+from tornado import gen
+from cqlengine import exceptions
+from .base import Json
+from ...tasks import user
+from ...models import User
+
+import datetime
 
 
 class UserResource(Json):
@@ -9,15 +15,24 @@ class UserResource(Json):
     """
     __route__ = ['/r/users']
 
+    gen.coroutine()
     def post(self):
-        email = self.json_args.get('email')
-        # hash password before passing to anywhere
-        password = self.core.hasher(self.json_args.get('login_psswd'))
-        gender = self.json_args.get('gender')
-        loc = self.json_args.get('loc')
-        bday = self.json_args.get('bday')
+        u = User(
+            email=self.json_args.get('email'),
+            password=self.core.hasher(self.json_args.get('login_psswd')),
+            gender=self.json_args.get('gender'),
+            nation=self.json_args.get('loc'),
+            bDay=self.json_args.get('bday'),
+            joinTime=datetime.datetime.now()
+        )
 
-        self.send_error(404)
+        # validate
+        try:
+            u.validate()
+        except exceptions.ValidationError as e:
+            
+           
+
 
     def get(self):
         self.send_error(404)
