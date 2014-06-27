@@ -30,6 +30,9 @@ class User(Model):
         if not validate_email(self.email):
             raise exceptions.ValidationError('Invalid email:' + self.email)
 
+        if self.gender < 1 or self.gender > 4:
+            raise exceptions.ValidationError('Invalid gender:' + str(self.gender))
+
     def get_auth_token(self):
         return c.serializer.dumps(self.email, self.password)
 
