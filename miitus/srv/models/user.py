@@ -1,5 +1,10 @@
 from __future__ import absolute_import
-from cqlengine import Model, columns, uuid4
+from cqlengine import Model, columns, uuid4, exceptions
+from validate_email import validate_email
+from ..core import Core
+
+
+c = Core()
 
 class User(Model):
     """
@@ -19,6 +24,12 @@ class User(Model):
     # TODO: other static use another model?
     joinTime = columns.DateTime()
 
+    def validate(self):
+        super(User, self).validate()
+
+        if not validate_email(self.email):
+            raise exceptions.ValidationError('Invalid email:' + self.email)
+
     def get_auth_token(self):
-        return login_serializer.dumps(self.email, self.password)
+        return c.serializer.dumps(self.email, self.password)
 
