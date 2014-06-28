@@ -16,11 +16,11 @@
       <div class="btn-group" dropdown>
         <label>Gender</label>
         <button type="button" class="btn btn-default dropdown-toggle form-control">
-          {{ genders[sign_up_info.gender_sel] }}<span class="caret"></span>
+          {{ genders[sign_up_info.gender_sel] }}&nbsp;<span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
           <li ng-repeat="gender in genders.slice(1)">
-            <a ng-click="select_gender($index+1)">{{ gender }}</a>
+            <a dropdown-toggle ng-click="select_gender($index+1)">{{ gender }}</a>
           </li>
         </ul>
       </div>
