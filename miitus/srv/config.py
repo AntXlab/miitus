@@ -1,6 +1,7 @@
 import miitus.defs
 
 # celery
+CELERY_MAIN_MODULE = 'mittus.srv.tasks'
 CELERY_BROKER_URL = 'amqp://'
 CELERY_BACKEND_URL = 'amqp://'
 

@@ -6,7 +6,7 @@ from ..models import User
 c = Core()
 
 
-@c.celery.task()
+@c.worker.task()
 def create_new_user(email, password, gender, loc, bday, joinTime):
     """
     ret: (uid, err)

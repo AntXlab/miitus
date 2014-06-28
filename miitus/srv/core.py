@@ -14,7 +14,7 @@ class Core(Singleton):
         c = Config()
 
         self.__app = Celery(
-            __name__,
+            c['CELERY_MAIN_MODULE'],
             broker=c['CELERY_BROKER_URL'],
             backend=c['CELERY_BACKEND_URL']
         )
@@ -26,7 +26,7 @@ class Core(Singleton):
         self.__hasher = Hasher(c['HASH_SECRET_KEY'])
 
     @property
-    def celery(self):
+    def worker(self):
         """
         get celery app
         """
@@ -45,4 +45,8 @@ class Core(Singleton):
         get hasher
         """
         return self.__hasher
+
+
+# for celeryd
+__celery_app = Core().worker
 
