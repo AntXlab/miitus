@@ -18,7 +18,7 @@ cd app
 bower install -f ../bower.json
 ```
 
-prepare for srv development
+prepare for server development
 ```bash
 pip install -r requirement.txt
 ```
@@ -27,3 +27,13 @@ Other dependencies
 - npm
 - rabbitmq
 - cassandra
+
+Start Rest Server
+```bash
+python run.py
+```
+
+Start worker
+```bash
+celery -A miitus.srv.tasks worker --app=miitus.srv.core:__celery_app --loglevel=info --autoreload
+```
