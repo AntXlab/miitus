@@ -21,6 +21,9 @@ class RestHandler(BaseHandler):
     request handler that handle IO in rest-style
     """
 
+    """
+    Overrided Part
+    """
     def initialize(self):
         super(RestHandler, self).initialize()
         self.__init_envelope()
@@ -39,21 +42,50 @@ class RestHandler(BaseHandler):
             else:
                 raise HTTPError('unsupported application type:' + content_type)
 
+    def write_error(self, status_code, **kwargs):
+        # almost identical to original procedure in tornaod, except
+        # that we need to write error into envelope first.
+        if self.settings.get('serve_traceback') and 'exc_info' in kwargs:
+            self.add_err({'msg': traceback.format_exception(kwargs['exc_info'])})
+        else:
+            self.add_err({'code': status_code, 'msg': self._reason})
+
+        self.finish()
+
+    def flush(self, include_footers=False, callback=None):
+        self.flush_objs()
+        return super(RestHandler, self).flush(include_footers, callback)
+
+
+    """
+    New internal func
+    """
     def __init_envelope(self):
         self.__rest_envelope = {}
         self.push_obj({
             'version': miitus.defs.REST_VERSION
             })
 
+    """
+    New API
+    """
+    def add_err(self, err):
+        errs = self.pop_obj(miitus.defs.REST_ERR_OBJ_NAME) or []
+        errs.append(err)
+        self.push_obj(miitus.defs.REST_ERR_OBJ_NAME, errs)
+
+    def pop_obj(self, key):
+        return self.__rest_envelope.pop(key, None)
+
     def push_obj(self, key, obj):
         if key and isinstance(key, six.string_types):
             self.__rest_envelope[key] = obj
 
-    def flush_objs(self, key=None, obj=None, callback=None):
+    def flush_objs(self, key=None, obj=None):
         if key and isinstance(key, six.string_types):
             self.__rest_envelope[key] = obj
 
-        self.write(self.__rest_envelope)
-        self.__init_envelope()
-        self.flush(callback=callback)
+        if len(self.__rest_envelope) > 1:
+            self.write(self.__rest_envelope)
+            self.__init_envelope()
 
