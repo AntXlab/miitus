@@ -1,4 +1,4 @@
-define(['angular'], function () {
+define(['angular', 'common/service/country'], function () {
     'use strict';
 
     return ['$scope', 'countryInfo', function ($scope, countryInfo) {
