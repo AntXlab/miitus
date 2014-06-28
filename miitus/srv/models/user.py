@@ -1,7 +1,8 @@
 from __future__ import absolute_import
-from cqlengine import Model, columns, uuid4, exceptions
+from cqlengine import Model, columns, exceptions
 from validate_email import validate_email
 from ..core import Core
+import uuid
 
 
 c = Core()
@@ -13,7 +14,7 @@ class User(Model):
     only kept static information here. For dynamic info, ex. last-login,
     we would kept them in other table
     """
-    id = columns.UUID(primary_key=True, default=uuid4)
+    id = columns.UUID(primary_key=True, default=uuid.uuid4)
 
     email = columns.Text(max_length=255, required=True)
     password = columns.Bytes(required=True)

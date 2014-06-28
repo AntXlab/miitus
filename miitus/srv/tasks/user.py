@@ -6,8 +6,8 @@ from ..models import User
 c = Core()
 
 
-c.celery.task()
-def create_new_user(email, password, gender, loc, bday):
+@c.celery.task()
+def create_new_user(email, password, gender, loc, bday, joinTime):
     """
     ret: (uid, err)
 
@@ -21,11 +21,17 @@ def create_new_user(email, password, gender, loc, bday):
     if u:
         return (None, 1)
     else:
+        """
         new_u = User(
             email=email,
-            password=password
-            gender=gender
-            bDay=bday
-            nation=loc
+            password=password,
+            gender=gender,
+            bDay=bday,
+            nation=loc,
+            joinTime=joinTime
+        )
 
+        new_u.save()
+        """
+        return (None, 2)
 
