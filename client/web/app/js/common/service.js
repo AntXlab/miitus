@@ -5,7 +5,6 @@ define(['angular'], function (ng) {
         .factory('svc_common_RRestangular', function (Restangular) {
             return Restangular.withConfig(function (RestangularConfigurer) {
                 RestangularConfigurer.setBaseUrl('/r');
-                RestangularConfigurer.setRequestSuffix('/');
             });
         })
         .factory('svc_common_ApiRestangular', function (Restangular) {
