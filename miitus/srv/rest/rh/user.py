@@ -1,21 +1,20 @@
 from __future__ import absolute_import
 from tornado.web import RequestHandler
 from tornado import gen
-from cqlengine import exceptions
-from .base import Json
+from .base import RestHandler
 from ...tasks import user
 from ...models import User
 
 import datetime
 
 
-class UserResource(Json):
+class UserResource(RestHandler):
     """
     User resource
     """
     __route__ = ['/r/users']
 
-    gen.coroutine()
+    @gen.coroutine
     def post(self):
         u = User(
             email=self.json_args.get('email'),
@@ -26,13 +25,10 @@ class UserResource(Json):
             joinTime=datetime.datetime.now()
         )
 
-        # validate
-        try:
-            u.validate()
-        except exceptions.ValidationError as e:
-            
-           
-
+        u.validate()
+        t = user.create_new_user(u.email, u.password, u.gender, u.nation, u.bDay, u.joinTime)
+        result = yield gen.Task(self.wait_for_result, t)
+        # TODO: result handling
 
     def get(self):
         self.send_error(404)
