@@ -5,8 +5,7 @@ from .base import RestHandler
 from ...tasks import user
 from ...models import User
 
-import datetime
-
+from datetime import datetime
 
 class UserResource(RestHandler):
     """
@@ -18,15 +17,14 @@ class UserResource(RestHandler):
     def post(self):
         u = User(
             email=self.json_args.get('email'),
-            password=self.core.hasher(self.json_args.get('login_psswd')),
+            password=self.core.hasher(self.json_args.get('password')),
             gender=self.json_args.get('gender'),
             nation=self.json_args.get('loc'),
-            bDay=self.json_args.get('bday'),
-            joinTime=datetime.datetime.now()
+            bDay=datetime.strptime(self.json_args.get('bday'), '%Y-%m-%d'),
+            joinTime=datetime.now()
         )
-
         u.validate()
-        t = user.create_new_user(u.email, u.password, u.gender, u.nation, u.bDay, u.joinTime)
+        t = user.create_new_user.delay(u.email, u.password, u.gender, u.nation, u.bDay, u.joinTime)
         result = yield gen.Task(self.wait_for_result, t)
         # TODO: result handling
 
@@ -38,8 +36,7 @@ class UserLogin(RequestHandler):
     """
     Login User
     """
-    __route__ = ['/p/users/login']
-
+    __route__ = ['/p/users/login'] 
     def get(self):
         """
         a login attempt via token stored in session-cookie
