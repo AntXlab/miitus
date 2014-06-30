@@ -1,9 +1,12 @@
 from __future__ import absolute_import
 from werkzeug.utils import import_string
 from os import path
+from datetime import timedelta
 from tornado.ioloop import IOLoop
+from tornado import stack_context
 import miitus.defs
 import hashlib
+import functools
 
 
 class _Singleton(type):
@@ -85,5 +88,10 @@ class CeleryResultMixin(object):
             callback(task.result)
         else:
             # TODO: different time-out value for each kind of task
-            IOLoop.instance().add_timeout(0.1, self.wait_for_result, task, callback)
+            IOLoop.instance().add_timeout(
+                timedelta(seconds=1),
+                functools.partial(
+                    stack_context.wrap(self.wait_for_result), task, callback
+                )
+            )
 
