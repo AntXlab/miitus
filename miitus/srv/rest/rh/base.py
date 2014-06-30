@@ -14,7 +14,7 @@ class BaseHandler(RequestHandler, CeleryResultMixin):
     """
     def initialize(self):
         super(BaseHandler, self).initialize()
-        self.__core = Core()
+        self.core = Core()
 
 
 class RestHandler(BaseHandler):
@@ -47,7 +47,7 @@ class RestHandler(BaseHandler):
         # almost identical to original procedure in tornaod, except
         # that we need to write error into envelope first.
         if self.settings.get('serve_traceback') and 'exc_info' in kwargs:
-            self.add_err({'msg': traceback.format_exception(kwargs['exc_info'])})
+            self.add_err({'msg': traceback.format_exception(*kwargs['exc_info'])})
         else:
             self.add_err({'code': status_code, 'msg': self._reason})
 
@@ -63,7 +63,7 @@ class RestHandler(BaseHandler):
     """
     def __init_envelope(self):
         self.__rest_envelope = {}
-        self.push_obj({
+        self.push_obj('meta', {
             'version': miitus.defs.REST_VERSION
             })
 
@@ -80,7 +80,18 @@ class RestHandler(BaseHandler):
 
     def push_obj(self, key, obj):
         if key and isinstance(key, six.string_types):
-            self.__rest_envelope[key] = obj
+            if key in self.__rest_envelope:
+                original = self.__rest_envelope[key]
+                if isinstance(original, dict) and isinstance(obj, dict):
+                   original.update(obj)
+                elif isinstance(original, list) and isinstance(obj, list):
+                   original.append(obj)
+                else:
+                    self.__rest_envelope[key] = obj
+            else:
+                self.__rest_envelope[key] = obj
+        else:
+            raise TypeError('Invalid key type: ' + type(key))
 
     def flush_objs(self, key=None, obj=None):
         if key and isinstance(key, six.string_types):
