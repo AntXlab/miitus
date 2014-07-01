@@ -14,9 +14,10 @@ class Core(Singleton):
         c = Config()
 
         self.__app = Celery(
-            c['CELERY_MAIN_MODULE'],
+            c['CELERY_MAIN_NAME'],
             broker=c['CELERY_BROKER_URL'],
-            backend=c['CELERY_BACKEND_URL']
+            backend=c['CELERY_BACKEND_URL'],
+            include=c['CELERY_MODULES_INCLUDE']
         )
 
         connection.setup(hosts=c['CQLENGINE_HOSTS'])

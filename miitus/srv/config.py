@@ -1,9 +1,12 @@
 import miitus.defs
 
 # celery
-CELERY_MAIN_MODULE = 'mittus.srv.tasks'
+CELERY_MAIN_NAME = 'mittus.srv.tasks'
 CELERY_BROKER_URL = 'amqp://'
 CELERY_BACKEND_URL = 'amqp://'
+CELERY_MODULES_INCLUDE = [
+    'miitus.srv.tasks.user'
+]
 
 # cqlengine 
 CQLENGINE_HOSTS = ['127.0.0.1']
