@@ -17,7 +17,7 @@ TORNADO_debug = True
 TORNADO_static_path = get_static_folder()
 TORNADO_static_url_prefix = defs.STATIC_URL_PREFIX 
 TORNADO_xsrf_cookie = True
-TORNADO_2PATCH_cookie_secret = '__SOMETHING_RANDOM__'
+TORNADO_2PATCH__cookie_secret = '__SOMETHING_RANDOM__'
 
 # TODO: this part should be patched before deployment
 # security
