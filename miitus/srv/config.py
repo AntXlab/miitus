@@ -17,6 +17,7 @@ from .util import get_static_folder
 TORNADO_debug = True
 TORNADO_static_path = get_static_folder()
 TORNADO_static_url_prefix = miitus.defs.STATIC_URL_PREFIX 
+TORNADO_xsrf_cookie = True
 
 # TODO: this part should be patched before deployment
 # security
