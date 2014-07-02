@@ -1,11 +1,10 @@
-import miitus.defs
+from miitus import defs
 
 # celery
 CELERY_MAIN_NAME = 'mittus.srv.tasks'
 CELERY_BROKER_URL = 'amqp://'
 CELERY_BACKEND_URL = 'amqp://'
 CELERY_MODULES_INCLUDE = [
-    'miitus.srv.tasks.user'
 ]
 
 # cqlengine 
@@ -16,7 +15,7 @@ CQLENGINE_HOSTS = ['127.0.0.1']
 from .util import get_static_folder
 TORNADO_debug = True
 TORNADO_static_path = get_static_folder()
-TORNADO_static_url_prefix = miitus.defs.STATIC_URL_PREFIX 
+TORNADO_static_url_prefix = defs.STATIC_URL_PREFIX 
 TORNADO_xsrf_cookie = True
 TORNADO_2PATCH_cookie_secret = '__SOMETHING_RANDOM__'
 
