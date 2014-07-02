@@ -4,6 +4,7 @@ from os import path
 from datetime import timedelta
 from tornado.ioloop import IOLoop
 from tornado import stack_context
+from six import string_types
 import miitus.defs
 import hashlib
 import functools
@@ -46,7 +47,7 @@ class Config(Singleton, dict):
                 self[k] = getattr(obj, k)
 
     def to_dict(self, prefix_filter=None):
-        if not isinstance(prefix_filter, str):
+        if not isinstance(prefix_filter, string_types):
             raise TypeError('only accept str for prefix_filter')
         ret = {}
         for k in self:
