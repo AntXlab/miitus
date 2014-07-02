@@ -1,7 +1,7 @@
 from tornado.web import Application, RequestHandler
 from werkzeug.utils import find_modules, import_string
 from ..util import Config, Singleton
-import miitus.defs
+from miitus import defs
 
 
 class App(Singleton):
@@ -31,7 +31,7 @@ class App(Singleton):
             mod = import_string(name)
             for item_name in dir(mod):
                 item = getattr(mod, item_name)
-                if type(item) == type and issubclass(item, RequestHandler) and hasattr(item, miitus.defs.ROUTE_ATTR_NAME):
+                if type(item) == type and issubclass(item, RequestHandler) and hasattr(item, defs.ROUTE_ATTR_NAME):
                     ret.extend(App.__gen_route(item))
 
         return ret
@@ -39,7 +39,7 @@ class App(Singleton):
     def __init__(self, package_name=None):
         self.__app = Application(
             App.__routes(package_name),
-            **(Config().to_dict(miitus.defs.TORNADO_CONFIG_PREFIX))
+            **(Config().to_dict(defs.TORNADO_CONFIG_PREFIX))
         )
 
     @property

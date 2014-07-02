@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from tornado.web import RequestHandler
-import miitus.defs
+from miitus import defs
 
 
 class Root(RequestHandler):
@@ -11,5 +11,5 @@ class Root(RequestHandler):
     __route__ = ['/']
 
     def get(self):
-        self.redirect(miitus.defs.STATIC_URL_PREFIX + miitus.defs.INDEX_PAGE)
+        self.redirect(defs.STATIC_URL_PREFIX + defs.INDEX_PAGE)
 

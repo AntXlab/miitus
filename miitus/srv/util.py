@@ -5,7 +5,7 @@ from datetime import timedelta
 from tornado.ioloop import IOLoop
 from tornado import stack_context
 from six import string_types
-import miitus.defs
+from miitus import defs
 import hashlib
 import functools
 
@@ -32,7 +32,7 @@ class Config(Singleton, dict):
     """
     def __init__(self, package_name=None):
         # import default config
-        package_name = package_name or miitus.defs.PACKAGE_ROOT
+        package_name = package_name or defs.PACKAGE_ROOT
         config_name = package_name + '.config'
 
         self.from_object(config_name)

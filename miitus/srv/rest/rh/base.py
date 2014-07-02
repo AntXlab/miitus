@@ -4,7 +4,7 @@ from tornado.escape import json_decode
 from ...core import Core
 from ...util import CeleryResultMixin
 import six
-import miitus.defs
+from miitus import defs
 import traceback
 
 
@@ -15,6 +15,9 @@ class BaseHandler(RequestHandler, CeleryResultMixin):
     def initialize(self):
         super(BaseHandler, self).initialize()
         self.core = Core()
+
+    def get_current_user(self):
+        """ get current user from session """
 
 
 class RestHandler(BaseHandler):
@@ -64,16 +67,16 @@ class RestHandler(BaseHandler):
     def __init_envelope(self):
         self.__rest_envelope = {}
         self.push_obj('meta', {
-            'version': miitus.defs.REST_VERSION
+            'version': defs.REST_VERSION
             })
 
     """
     New API
     """
     def add_err(self, err):
-        errs = self.pop_obj(miitus.defs.REST_ERR_OBJ_NAME) or []
+        errs = self.pop_obj(defs.REST_ERR_OBJ_NAME) or []
         errs.append(err)
-        self.push_obj(miitus.defs.REST_ERR_OBJ_NAME, errs)
+        self.push_obj(defs.REST_ERR_OBJ_NAME, errs)
 
     def pop_obj(self, key):
         return self.__rest_envelope.pop(key, None)
