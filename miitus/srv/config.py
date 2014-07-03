@@ -4,7 +4,7 @@ from miitus import defs
 CELERY_MAIN_NAME = 'mittus.srv.tasks'
 CELERY_BROKER_URL = 'amqp://'
 CELERY_BACKEND_URL = 'amqp://'
-CELERY_MODULES_INCLUDE = [
+CELERY_CONF_CELERY_IMPORTS = [
 ]
 
 # cqlengine 
