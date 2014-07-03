@@ -1,8 +1,7 @@
 from celery import Celery
+from celery.signals import worker_process_init
 from cqlengine import connection
 from itsdangerous import URLSafeTimedSerializer
-from werkzeug.utils import find_modules
-from six import string_types
 from .util import Singleton, Config, Hasher
 from miitus import defs
 
@@ -11,20 +10,6 @@ class Core(Singleton):
     """
     containing everything needs one-time initialization
     """
-    @staticmethod
-    def __gen_task_include(package_name):
-        """ scan miitus/srv/tasks folder to include those modules """
-        if not isinstance(package_name, string_types):
-            raise TypeError(
-                'Only accept string-types for package_name, not:' + str(package_name)
-            )
-
-        ret = []
-        for name in find_modules(package_name, recursive=True):
-            ret.append(name)
-
-        return ret
-
     def __init__(self):
         """
         """
@@ -33,14 +18,11 @@ class Core(Singleton):
         self.__app = Celery(
             c['CELERY_MAIN_NAME'],
             broker=c['CELERY_BROKER_URL'],
-            backend=c['CELERY_BACKEND_URL'],
-            include=c['CELERY_MODULES_INCLUDE'].extend(Core.__gen_task_include(defs.TASK_PACKAGE_ROOT))
+            backend=c['CELERY_BACKEND_URL']
         )
 
-        connection.setup(hosts=c['CQLENGINE_HOSTS'])
-
+        self.__app.config_from_object(c.to_dict(prefix_filter=defs.CELERY_CONFIG_PREFIX))
         self.__serializer = URLSafeTimedSerializer(c['TOKEN_SECRET_KEY'])
-
         self.__hasher = Hasher(c['HASH_SECRET_KEY'])
 
     @property
@@ -63,6 +45,23 @@ class Core(Singleton):
         get hasher
         """
         return self.__hasher
+
+    @worker_process_init.connect
+    def init_db_connection(**kwargs):
+        """
+        Please refer to the link below to find out why we didn't establish
+        db connection in __init__
+        
+            http://www.dctrwatson.com/2010/09/python-thread-safe-does-not-mean-fork-safe/
+
+        In short, the db-connection handle of parent process would be copied to memory
+        of child process by fork.
+        """
+        c = Config()
+
+        # this callback can't execute longer than 4 seconds, or would be interrupted by
+        # celery
+        connection.setup(hosts=c['CQLENGINE_HOSTS'], default_keyspace=defs.CQL_KEYSPACE_NAME)
 
 
 # for celeryd

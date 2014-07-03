@@ -4,6 +4,7 @@ from os import path
 from datetime import timedelta
 from tornado.ioloop import IOLoop
 from tornado import stack_context
+from werkzeug.utils import find_modules
 from six import string_types
 from miitus import defs
 import hashlib
@@ -30,12 +31,31 @@ class Config(Singleton, dict):
     """
     config object
     """
+
+    @staticmethod
+    def __gen_task_include(package_name):
+        """ scan miitus/srv/tasks folder to include those modules """
+        if not isinstance(package_name, string_types):
+            raise TypeError(
+                'Only accept string-types for package_name, not:' + str(package_name)
+            )
+
+        ret = []
+        for name in find_modules(package_name, recursive=True):
+            ret.append(name)
+
+        return ret
+
+
     def __init__(self, package_name=None):
-        # import default config
+        """ import default config, and apply required patches """
         package_name = package_name or defs.PACKAGE_ROOT
         config_name = package_name + '.config'
 
         self.from_object(config_name)
+
+        # import task-modules
+        self['CELERY_CONF_CELERY_IMPORTS'].extend(Config.__gen_task_include(defs.TASK_PACKAGE_ROOT))
 
     def from_object(self, obj):
         """
@@ -46,13 +66,16 @@ class Config(Singleton, dict):
             if not k.startswith('_'):
                 self[k] = getattr(obj, k)
 
-    def to_dict(self, prefix_filter=None):
+    def to_dict(self, prefix_filter=None, remove_prefix=True):
         if not isinstance(prefix_filter, string_types):
             raise TypeError('only accept str for prefix_filter')
         ret = {}
         for k in self:
             if k.startswith(prefix_filter):
-                ret[k[len(prefix_filter):]] = self[k]
+                if remove_prefix:
+                    ret[k[len(prefix_filter):]] = self[k]
+                else:
+                    ret[k] = self[k]
         return ret
 
 
