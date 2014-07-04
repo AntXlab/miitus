@@ -1,13 +1,12 @@
 from __future__ import absolute_import
-from ..core import Core
-from ..err import AlreadyExists, DBGenericError, NotExists
+from celery import shared_task
+from ..exceptions import AlreadyExists, DBGenericError, NotExists
 from ..models import User
+from ..utils import return_exception
 
 
-c = Core()
-
-
-@c.worker.task()
+@shared_task
+@return_exception
 def create_new_user(email, password, gender, loc, bday, joinTime):
     """
     ret: (email, err)
@@ -36,15 +35,13 @@ def create_new_user(email, password, gender, loc, bday, joinTime):
         raise AlreadyExists('The email is just registered: ' + str(email))
 
 
-@c.worker.task()
+@shared_task
+@return_exception
 def check_user_password(email, password):
     """ check password, note that the password should be hashed. """
     u = User.objects(email=email).first()
     if u:
-        if u.password == password:
-            return True
-        else:
-            return False
+        return u.password == password
     else:
         raise NotExists()
 
