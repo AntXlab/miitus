@@ -2,11 +2,12 @@ from __future__ import absolute_import
 from cqlengine import Model, columns, exceptions
 from validate_email import validate_email
 from ..core import Core
+from ..utils import ModelHelperMixin
 
 
 c = Core()
 
-class User(Model):
+class User(Model, ModelHelperMixin):
     """
     class User
 

@@ -166,3 +166,14 @@ class UserMixin(object):
         self.clear_cookie('user')
         self.clear_cookie('token')
 
+
+class ModelHelperMixin(object):
+    """
+    """
+    def to_dict(self):
+        """
+        I'm not sure if the '_' means they want it private.
+        Thus I create a helper class to wrap it. Once it's private
+        in the future, I would roll one on my own.
+        """
+        return self._as_dict()
