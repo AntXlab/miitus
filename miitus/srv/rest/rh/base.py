@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from tornado.web import RequestHandler, HTTPError
 from tornado.escape import json_decode
 from ...core import Core
-from ...util import CeleryResultMixin
+from ...utils import CeleryResultMixin
 import six
 from miitus import defs
 import traceback
@@ -18,6 +18,12 @@ class BaseHandler(RequestHandler, CeleryResultMixin):
 
     def get_current_user(self):
         """ get current user from session """
+        u = self.get_secure_cookie('user')
+        u = u and json_decode(u)
+        if not isinstance(u, dict):
+            raise TypeError('cracked cookie, unknown type of user-object: ' + str(u))
+
+        return u
 
 
 class RestHandler(BaseHandler):
