@@ -1,6 +1,6 @@
 from tornado.web import Application, RequestHandler
 from werkzeug.utils import find_modules, import_string
-from ..util import Config, Singleton
+from ..utils import Config, Singleton
 from miitus import defs
 
 
