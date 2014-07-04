@@ -152,7 +152,7 @@ class UserMixin(object):
         if not hasattr(self, '__user_cookie_duration'):
             self.__user_cookie_duration = Config()['USER_COOKIE_DURATION']
 
-        if isinstance(user_obj, dict):
+        if not isinstance(user_obj, dict):
             raise TypeError('user_obj should be dict')
 
         self.set_secure_cookie('user', json_encode(user_obj), expires_days=self.__user_cookie_duration)
