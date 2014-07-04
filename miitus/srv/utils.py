@@ -155,6 +155,10 @@ class UserMixin(object):
         if not isinstance(user_obj, dict):
             raise TypeError('user_obj should be dict')
 
+        if 'password' in user_obj:
+            """ make sure we won't send password through the wire """
+            user_obj.pop('password', None)
+
         self.set_secure_cookie('user', json_encode(user_obj), expires_days=self.__user_cookie_duration)
 
     def logout_user(self):
