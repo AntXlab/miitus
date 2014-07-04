@@ -12,3 +12,6 @@ class RevokeChainRequested(Exception):
 
 class BrokenToken(Exception):
     pass
+
+class PasswordWrong(Exception):
+    pass
