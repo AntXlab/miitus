@@ -6,3 +6,9 @@ class DBGenericError(RuntimeError):
 
 class NotExists(Exception):
     pass
+
+class RevokeChainRequested(Exception):
+    pass
+
+class BrokenToken(Exception):
+    pass
