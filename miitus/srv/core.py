@@ -2,7 +2,7 @@ from celery import Celery
 from celery.signals import worker_process_init
 from cqlengine import connection
 from itsdangerous import URLSafeTimedSerializer
-from .util import Singleton, Config, Hasher
+from .utils import Singleton, Config, Hasher
 from miitus import defs
 
 
@@ -10,6 +10,7 @@ class Core(Singleton):
     """
     containing everything needs one-time initialization
     """
+
     def __init__(self):
         """
         """
@@ -22,7 +23,7 @@ class Core(Singleton):
         )
 
         self.__app.config_from_object(c.to_dict(prefix_filter=defs.CELERY_CONFIG_PREFIX))
-        self.__serializer = URLSafeTimedSerializer(c['TOKEN_SECRET_KEY'])
+        self.__serializer = Serializer(c['TOKEN_SECRET_KEY'], c['MAX_AGE'])
         self.__hasher = Hasher(c['HASH_SECRET_KEY'])
 
     @property
@@ -63,6 +64,18 @@ class Core(Singleton):
         # celery
         connection.setup(hosts=c['CQLENGINE_HOSTS'], default_keyspace=defs.CQL_KEYSPACE_NAME)
 
+
+class Serializer(object):
+
+    def __init__(self, secret, max_age):
+        self.__max_age = max_age
+        self.__serializer = URLSafeTimedSerializer(secret)
+
+    def loads(self, token):
+        return self.__serializer(token, max_age=self.__max_age)
+
+    def dumps(self, data):
+        return self.__serializer(data)
 
 # for celeryd
 __celery_app = Core().worker
