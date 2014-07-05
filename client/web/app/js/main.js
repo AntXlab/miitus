@@ -5,10 +5,9 @@ require.config({
         angular: '../bower_components/angular/angular',
         angular_cookies: '../bower_components/angular-cookies/angular-cookies',
         angular_sanitize: '../bower_components/angular-sanitize/angular-sanitize',
-        angular_route: '../bower_components/angular-route/angular-route',
         angular_ui_router: '../bower_components/angular-ui-router/release/angular-ui-router.min',
         angular_bootstrap: '../bower_components/angular-bootstrap/ui-bootstrap-tpls.min',
-        jquery: '../bower_components/jquery/jquery',
+        jquery: '../bower_components/jquery/dist/jquery.min',
         bootstrap: '../bower_components/bootstrap-sass/js',
         requirejs_domready: '../bower_components/requirejs-domready/domReady',
         restangular: '../bower_components/restangular/dist/restangular.min',
@@ -23,9 +22,6 @@ require.config({
             deps: ['angular']
         },
         'angular_sanitize': {
-            deps: ['angular']
-        },
-        'angular_route': {
             deps: ['angular']
         },
         'angular_ui_router': {
