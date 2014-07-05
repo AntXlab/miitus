@@ -2,7 +2,6 @@ define([
     'angular',
     'angular_cookies',
     'angular_sanitize',
-    'angular_route',
     'angular_ui_router',
     'angular_bootstrap',
     'restangular',
@@ -16,7 +15,6 @@ define([
     return ng.module('webApp', [
         'ngCookies',
         'ngSanitize',
-        'ngRoute',
         'restangular',
         'ui.router',
         'ui.bootstrap',
