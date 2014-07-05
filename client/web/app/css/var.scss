@@ -1,4 +1,4 @@
-@import "bootstrap-sass/lib/bootstrap";
+@import "override.scss";
 
 // Social Color
 $color-fb-blue:       #48649F;
@@ -30,13 +30,6 @@ $color-content: #34495E;
     @include button-variant(white, $color-fb-green, $btn-default-border);
 }
 
-.op-row{
-    @extend .row;
-
-    margin-top: $grid_gutter;
-    margin-bottom: $grid_gutter;
-}
-
 .dev {
 //    border-width: 2px;
 //    border-style: double;
@@ -45,10 +38,6 @@ $color-content: #34495E;
 
 .header-fix-height-50 {
     height: $navbar-height;
-}
-
-.header-fix-height-82 {
-    height: 82px;
 }
 
 .content {
@@ -69,8 +58,6 @@ $color-content: #34495E;
 
 .view {
     @extend .fill-height;
-
-    background-color: $color-view;
 }
 
 .pad {
