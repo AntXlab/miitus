@@ -46,8 +46,10 @@ class UserResource(RestHandler, UserMixin):
             else:
                 raise exceptions.PasswordWrong('kinda not possible to be here')
 
-            # if nothing goes wrong,
-            self.push_obj('user', {'email': u.email})
+            # generate user_obj
+            user_obj = u.to_dict()
+            user_obj.pop('password', None)
+            self.push_obj('user', user_obj)
             self.push_obj('status', {'code': err.success})
             self.set_status(200)
 
@@ -63,7 +65,7 @@ class UserResource(RestHandler, UserMixin):
 
     def get(self):
         """
-        get user resource object
+        get an arbitary user's resource object
         """
         self.send_error(404)
 
@@ -77,7 +79,20 @@ class UserLogin(RequestHandler, UserMixin):
         """
         a login attempt via token stored in session-cookie
         """
-        self.send_error(404)
+        try:
+            u = self.get_secure_cookie('user')
+            if u:
+                self.push_obj('user', u)
+                self.set_status(200)
+            else:
+                """ TODO: redirect to login page """
+
+        except Exception as e:
+            self.add_err(e)
+            self.push_obj('status', {'code': err.failed})
+            self.set_status(500)
+        finally:
+            self.flush()
 
 
     def post(self):
