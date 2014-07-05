@@ -25,20 +25,12 @@
       <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
-    <!--
-    <div id="header" class="container header-fix-height" ui-view="header">
-      <div class="row" ui-view="header">
-        <div class="col-lg-2" ui-view="logo"></div>
-        <div id="nav_top" class="col-lg-6"></div>
-        <div class="col-lg-4" ui-view="ctrl"></div>
-      </div>
+    <div>
+      <div ui-view="header"></div>
     </div>
-    -->
-
-    <div ui-view="header"></div>
     <div class="container fill-height">
-      <div ui-view="header-padding"></div>
-      <div class="op-row view" ui-view="content"></div>
+      <div class="header-fix-height-50"></div>
+      <div class="view" ui-view="content"></div>
       <div class="header-fix-height-50"></div>
     </div>
     <div ui-view="footer"></div>

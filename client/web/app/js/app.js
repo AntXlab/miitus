@@ -104,9 +104,6 @@ define([
                 'header': {
                     templateUrl: 'view/anony/header.html'
                 },
-                'header-padding': {
-                    template: '<div class="header-fix-height-82"></div>'
-                },
                 'footer': {
                     templateUrl: 'view/common/footer.html'
                 },
@@ -118,9 +115,6 @@ define([
             views: {
                 'header': {
                     templateUrl: 'view/user/header.html'
-                },
-                'header-padding': {
-                    template: '<div class="header-fix-height-50"></div>'
                 },
                'footer': {
                     templateUrl: 'view/common/footer.html'
@@ -147,6 +141,14 @@ define([
             views: {
                 'content@': {
                     templateUrl: 'view/common/auth/c/sign_up.html'
+                },
+            },
+        })
+        .state('anony.login', {
+            url:'/login',
+            views: {
+                'content@': {
+                    templateUrl: 'view/anony/login.html'
                 },
             },
         })
