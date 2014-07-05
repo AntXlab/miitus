@@ -14,8 +14,7 @@ prepare for web development
 ```bash
 cd client/web/
 npm install
-cd app
-bower install -f ../bower.json
+bower install
 ```
 
 prepare for server development
