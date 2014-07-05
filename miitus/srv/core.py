@@ -6,6 +6,24 @@ from .utils import Singleton, Config, Hasher
 from miitus import defs
 
 
+@worker_process_init.connect
+def _init_db_connection(**kwargs):
+    """
+    Please refer to the link below to find out why we didn't establish
+    db connection in __init__
+        
+        http://www.dctrwatson.com/2010/09/python-thread-safe-does-not-mean-fork-safe/
+
+    In short, the db-connection handle of parent process would be copied to memory
+    of child process by fork.
+    """
+    c = Config()
+    
+    # this callback can't execute longer than 4 seconds, or would be interrupted by
+    # celery
+    connection.setup(hosts=c['CQLENGINE_HOSTS'], default_keyspace=defs.CQL_KEYSPACE_NAME)
+
+
 class Core(Singleton):
     """
     containing everything needs one-time initialization
@@ -25,6 +43,12 @@ class Core(Singleton):
         self.__app.config_from_object(c.to_dict(prefix_filter=defs.CELERY_CONFIG_PREFIX))
         self.__serializer = Serializer(c['TOKEN_SECRET_KEY'], c['MAX_AGE'])
         self.__hasher = Hasher(c['HASH_SECRET_KEY'])
+
+        if defs.CELERY_ALWAYS_EAGER in c and c[defs.CELERY_ALWAYS_EAGER] == True:
+            # TODO: better way to handle this case is lazy-loading, however, it's 
+            # a feature not merged to master branch of cqlegine, would be merged
+            # in 0.16.
+            _init_db_connection()
 
     @property
     def worker(self):
@@ -47,23 +71,6 @@ class Core(Singleton):
         """
         return self.__hasher
 
-    @worker_process_init.connect
-    def init_db_connection(**kwargs):
-        """
-        Please refer to the link below to find out why we didn't establish
-        db connection in __init__
-        
-            http://www.dctrwatson.com/2010/09/python-thread-safe-does-not-mean-fork-safe/
-
-        In short, the db-connection handle of parent process would be copied to memory
-        of child process by fork.
-        """
-        c = Config()
-
-        # this callback can't execute longer than 4 seconds, or would be interrupted by
-        # celery
-        connection.setup(hosts=c['CQLENGINE_HOSTS'], default_keyspace=defs.CQL_KEYSPACE_NAME)
-
 
 class Serializer(object):
 
@@ -77,6 +84,6 @@ class Serializer(object):
     def dumps(self, data):
         return self.__serializer(data)
 
-# for celeryd
+# for celery worker
 __celery_app = Core().worker
 
