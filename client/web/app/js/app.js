@@ -198,7 +198,7 @@ define([
         $rootScope.user = {};
         // query user-email from server, once queried, which
         // means we've login.
-        var user = ApiRestangular.one('users/login/');
+        var user = ApiRestangular.one('users/login');
         user.get().then(
             function (data) {
                 if (!!data) {
