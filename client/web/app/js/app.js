@@ -148,7 +148,7 @@ define([
             url: '/sign_up',
             views: {
                 'content@': {
-                    templateUrl: 'view/common/auth/sign_up.html'
+                    templateUrl: 'view/common/auth/c/sign_up.html'
                 },
             },
         })
