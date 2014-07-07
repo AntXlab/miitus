@@ -1,7 +1,6 @@
 from __future__ import absolute_import
+from tornado.web import RequestHandler
 from tornado import gen
-from datetime import datetime
-from .base import RestHandler
 from ...tasks import user
 from ...models import User
 from ...utils import UserMixin
@@ -9,51 +8,23 @@ from miitus.srv import exceptions
 from miitus.srv.rest import err
 
 
-class UserResource(RestHandler, UserMixin):
+class Session(RequestHandler, UserMixin):
     """
-    User resource
+    Login User
     """
-    __route__ = ['/r/users']
-
-    @gen.coroutine
-    def post(self):
+    __route__ = ['/r/sessions'] 
+    def get(self):
         """
+        a login attempt via token stored in session-cookie
         """
         try:
-            u = User(
-                email=self.json_args.get('email'),
-                password=self.core.hasher(self.json_args.get('password')),
-                gender=self.json_args.get('gender'),
-                nation=self.json_args.get('loc'),
-                bDay=datetime.strptime(self.json_args.get('bday'), '%Y-%m-%d'),
-                joinTime=datetime.now()
-            )
-
-            # would raise ValidationError is not valid
-            u.validate()
-
-            t = (user.create_new_user.si(u.email, u.password, u.gender, u.nation, u.bDay, u.joinTime) |\
-                user.check_user_password.si(u.email, u.password)
-            ).delay()
-
-            result = yield gen.Task(self.wait_for_result, t)
-            if (issubclass(type(result), Exception)):
-                raise result
-
-            if result == True:
-                self.login_user(u.to_dict())
+            u = self.get_secure_cookie('user')
+            if u:
+                self.push_obj('user', u)
+                self.set_status(200)
             else:
-                raise exceptions.PasswordWrong('kinda not possible to be here')
+                """ TODO: redirect to login page """
 
-            # generate user_obj
-            user_obj = u.to_dict()
-            user_obj.pop('password', None)
-            self.push_obj('user', user_obj)
-            self.push_obj('status', {'code': err.success})
-            self.set_status(200)
-
-        except exceptions.AlreadyExists as e:
-            self.push_obj('status', {'code': err.user_already_exist})
         except Exception as e:
             self.add_err(e)
             self.push_obj('status', {'code': err.failed})
@@ -62,9 +33,47 @@ class UserResource(RestHandler, UserMixin):
             self.flush()
 
 
-    def get(self):
+    def post(self):
         """
-        get an arbitary user's resource object
+        a login attempt, email & password should be
+        passed via post-data.
         """
-        self.send_error(404)
+        try:
+            u = User(
+                email=self.json_args.get('email'),
+                password=self.core.hasher(self.json_args.get('password')),
+            )
+
+            # would raise ValidationError is not valid
+            u.validate()
+
+            t = user.check_user_password(u.email, u.password).delay()
+            result = yield gen.Task(self.wait_for_result, t)
+
+            if result == True:
+                self.login_user(u.to_dict())
+            else:
+                raise exceptions.PasswordWrong('kinda not possible to be here')
+
+            # if nothing goes wrong,
+            self.push_obj('user', {'email': u.email})
+            self.push_obj('status', {'code': err.success})
+            self.set_status(200)
+
+        except Exception as e:
+            self.add_err(e)
+            self.push_obj('status', {'code': err.failed})
+            self.set_status(500)
+        finally:
+            self.flush()
+
+    def delete(self):
+        """
+        a logout attempt
+        """
+        self.logout_user()
+
+        self.set_status(200)
+        self.push_obj('status', {'code': err.success})
+        self.flush()
 
