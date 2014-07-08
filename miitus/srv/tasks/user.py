@@ -9,7 +9,7 @@ from ..utils import return_exception
 @return_exception
 def create_new_user(email, password, gender, loc, bday, joinTime):
     """
-    ret: (email, err)
+    ret: None
     """
     # check if this email is registered
     if User.objects(email=email).first():
@@ -38,7 +38,11 @@ def create_new_user(email, password, gender, loc, bday, joinTime):
 @shared_task
 @return_exception
 def check_user_password(email, password):
-    """ check password, note that the password should be hashed. """
+    """
+    check password, note that the password should be hashed.
+
+    ret: True is check passed.
+    """
     u = User.objects(email=email).first()
     if u:
         return u.password == password
