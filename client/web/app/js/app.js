@@ -186,7 +186,7 @@ define([
         .state('user.error', ng.copy(stateError))
         ;
     })
-    .run(['$rootScope', '$state', 'svc_common_ApiRestangular', function ($rootScope, $state, ApiRestangular) {
+    .run(['$rootScope', '$state', 'svc_common_RRestangular', function ($rootScope, $state, RRestangular) {
         // init UI state
         $rootScope.ui_state = {};
         $rootScope.ui_state.login = false;
@@ -200,8 +200,7 @@ define([
         $rootScope.user = {};
         // query user-email from server, once queried, which
         // means we've login.
-        var user = ApiRestangular.one('users/login');
-        user.get().then(
+        RRestangular.all('sessions').get().then(
             function (data) {
                 if (!!data) {
                     $rootScope.user.email = data.email;
