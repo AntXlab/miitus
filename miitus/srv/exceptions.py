@@ -15,3 +15,7 @@ class BrokenToken(Exception):
 
 class PasswordWrong(Exception):
     pass
+
+class WorkerIdInitFailed(Exception):
+    pass
+
