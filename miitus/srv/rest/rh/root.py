@@ -11,5 +11,5 @@ class Root(RequestHandler):
     __route__ = ['/']
 
     def get(self):
-        self.redirect(defs.STATIC_URL_PREFIX + defs.INDEX_PAGE)
+        self.redirect(defs.STATIC_WEB_URL_PREFIX + defs.INDEX_PAGE)
 

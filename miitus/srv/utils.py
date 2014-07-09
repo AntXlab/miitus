@@ -80,8 +80,11 @@ class Config(Singleton, dict):
         return ret
 
 
-def get_static_folder():
+def get_static_web_folder():
     return path.join(path.join(path.join(path.dirname(path.dirname(path.dirname(__file__))), 'client'), 'web'), 'app')
+
+def get_static_api_doc_folder():
+    return path.join(path.join(path.dirname(path.dirname(path.dirname(__file__))), 'docs'), 'swagger')
 
 
 class Hasher(object):
@@ -129,13 +132,13 @@ def return_exception(t):
     """
     @functools.wraps(t)                                                                  
     def inner(*args, **kwargs):                                                
-        exps = [arg for arg in args if issubclass(type(arg), Exception)]                                                                                   
-        if len(exps) > 0:                                                      
+        exps = [arg for arg in args if issubclass(type(arg), Exception)]
+        if len(exps) > 0:
             return exps[0]
 
-        try:                                                                   
-            return t(*args, **kwargs)                                          
-        except Exception as e:                                                 
+        try:
+            return t(*args, **kwargs)
+        except Exception as e:
             return e
 
     return inner
@@ -181,3 +184,4 @@ class ModelHelperMixin(object):
         in the future, I would roll one on my own.
         """
         return self._as_dict()
+

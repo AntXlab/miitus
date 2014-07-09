@@ -1,10 +1,11 @@
-from tornado.web import Application, RequestHandler
+from tornado.web import Application, RequestHandler, StaticFileHandler
 from werkzeug.utils import find_modules, import_string
-from ..utils import Config, Singleton
 from miitus import defs
+from miitus.srv import utils
+from .rh.base import SwaggerJsonFileHandler
 
 
-class App(Singleton):
+class App(utils.Singleton):
     """
     tornado application container
     """
@@ -37,10 +38,18 @@ class App(Singleton):
         return ret
 
     def __init__(self, package_name=None):
-        self.__app = Application(
-            App.__routes(package_name),
-            **(Config().to_dict(defs.TORNADO_CONFIG_PREFIX))
-        )
+        r = App.__routes(package_name)
+        c = utils.Config().to_dict(defs.TORNADO_CONFIG_PREFIX)
+        if c['debug']:
+            # serve static files from tornado directly
+            r.append((defs.STATIC_WEB_URL_PREFIX, StaticFileHandler, {"path": utils.get_static_web_folder()}))
+            r.append((
+                defs.STATIC_APIDOC_URL_PREFIX,
+                SwaggerJsonFileHandler,
+                {"path": utils.get_static_api_doc_folder()}
+            ))
+
+        self.__app = Application(r, **c)
 
     @property
     def app(self):

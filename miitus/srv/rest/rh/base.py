@@ -1,11 +1,14 @@
 from __future__ import absolute_import
-from tornado.web import RequestHandler, HTTPError
+from os import path
+from tornado.web import RequestHandler, HTTPError, StaticFileHandler
 from tornado.escape import json_decode
 from ...core import Core
 from ...utils import CeleryResultMixin
-import six
 from miitus import defs
+
 import traceback
+import six
+
 
 
 class BaseHandler(RequestHandler, CeleryResultMixin):
@@ -109,4 +112,13 @@ class RestHandler(BaseHandler):
         if len(self.__rest_envelope) > 1:
             self.write(self.__rest_envelope)
             self.__init_envelope()
+
+
+class SwaggerJsonFileHandler(StaticFileHandler):
+    """
+    """
+    def parse_url_path(self, url_path):
+        if len(url_path) == 0:
+            return 'resource_list.json'
+        return path.join('res', (url_path + '.json'))
 
