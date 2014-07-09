@@ -54,6 +54,7 @@ class UserResource(RestHandler, UserMixin):
 
         except exceptions.AlreadyExists as e:
             self.push_obj('status', {'code': err.user_already_exist})
+            self.set_status(409, 'User already exists')
         except Exception as e:
             self.add_err(e)
             self.push_obj('status', {'code': err.failed})

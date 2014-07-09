@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from tornado.web import RequestHandler
+from tornado.web import RestHandler
 from tornado import gen
 from ...tasks import user
 from ...models import User
@@ -8,7 +8,7 @@ from miitus.srv import exceptions
 from miitus.srv.rest import err
 
 
-class Session(RequestHandler, UserMixin):
+class Session(RestHandler, UserMixin):
     """
     Login User
     """
@@ -23,7 +23,7 @@ class Session(RequestHandler, UserMixin):
                 self.push_obj('user', u)
                 self.set_status(200)
             else:
-                """ TODO: redirect to login page """
+                self.set_status(401, reason="Unauthorized")
 
         except Exception as e:
             self.add_err(e)
@@ -59,6 +59,9 @@ class Session(RequestHandler, UserMixin):
             self.push_obj('user', {'email': u.email})
             self.push_obj('status', {'code': err.success})
             self.set_status(200)
+
+        except exceptions.PasswordWrong:
+            self.set_status(401, reason="Invalid Password Or Email")
 
         except Exception as e:
             self.add_err(e)
