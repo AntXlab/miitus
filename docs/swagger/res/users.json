@@ -88,21 +88,35 @@
                 "bday": {
                     "type": "string",
                     "format": "date"
-                },
-                "dtype": {
-                    "type": "string"
                 }
             },
             "required": [
-                "email", "gender", "loc", "bday", "dtype"
-            ],
-            "discriminator": "dtype",
-            "subTypes": ["UserWithPassword"]
+                "email", "gender", "loc", "bday"
+            ]
         },
         "UserWithPassword": {
             "id": "UserWithPassword",
             "name": "UserWithPassword",
             "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "UUID of this user"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "loc": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "bday": {
+                    "type": "string",
+                    "format": "date"
+                },
                 "password": {
                     "type": "string"
                 }
