@@ -3,14 +3,43 @@ from celery import shared_task
 from ..utils import return_exception
 from ..core import Core
 from ..exceptions import WorkerIdInitFailed
+from ..model import Worker
 from datetime import datetime
 from miitus import defs
-import time
+import random, time
 
 
 c = Core()
 seqs = [0] * defs.SEQ_MAX
+wid = 0
 
+def get_wid():
+    global wid
+
+    if not wid:
+        r = random.SystemRandom(time.time())
+        salt = r.random()
+        while True:
+            id = r.random()
+            # check if this id is already used.
+            exist = Worker.objects(id=id).first()
+            if exist:
+                continue
+
+            # create a record
+            Worker.create(id=id, salt=salt)
+
+            # sleep a while
+            time.sleep(1)
+
+            # make sure we are the owner of that record
+            back_check = Worker.objects(id=id).first()
+            if back_check.salt == salt:
+                wid = id
+                break
+
+    return wid
+ 
 
 @shared_task
 @return_exception
@@ -34,7 +63,7 @@ def gen_dist_uuid(resource):
         raise ValueError('receive resource-id: ' + str(resource) +\
                 ', when max resource-id is:' + str(defs.SEQ_MAX))
 
-    wid = c.wid
+    wid = get_wid()
     if not wid:
         raise WorkerIdInitFailed()
 
