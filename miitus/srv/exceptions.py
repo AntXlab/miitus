@@ -1,9 +1,6 @@
 class AlreadyExists(Exception):
     pass
 
-class DBGenericError(RuntimeError):
-    pass
-
 class NotExists(Exception):
     pass
 
@@ -17,5 +14,8 @@ class PasswordWrong(Exception):
     pass
 
 class WorkerIdInitFailed(Exception):
+    pass
+
+class ParellelInsertionDetected(Exception):
     pass
 

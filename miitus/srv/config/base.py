@@ -8,6 +8,7 @@ CELERY_CONF_CELERY_CHORD_PROPAGATES = True
 
 # cqlengine 
 CQLENGINE_HOSTS = ['127.0.0.1']
+CQL_SHORT_TTL = 16
 
 # tornado
 TORNADO_xsrf_cookie = True

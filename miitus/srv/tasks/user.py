@@ -1,38 +1,50 @@
 from __future__ import absolute_import
 from celery import shared_task
-from ..exceptions import AlreadyExists, DBGenericError, NotExists
-from ..models import User
-from ..utils import return_exception
+from ..exceptions import AlreadyExists, NotExists, ParellelInsertionDetected
+from ..models import User, EmailLocker
+from ..utils import return_exception, Config
+from ..core import Core
+
+
+c = Core()
+conf = Config()
 
 
 @shared_task
 @return_exception
-def create_new_user(email, password, gender, loc, bday, joinTime):
+def create_new_user(id, email, password, gender, loc, bday, joinTime):
     """
     ret: None
     """
-    # check if this email is registered
+    # check if this email is already registered
     if User.objects(email=email).first():
         raise AlreadyExists('The email is registered: ' + str(email))
 
-    # TODO: "IF NOT EXIST" for insert statement
-    User.create(
-        email=email,
-        password=password,
-        gender=gender,
-        bDay=bday,
-        nation=loc,
-        joinTime=joinTime
-    )
+    # creat locker instance
+    salt=c.random()
+    locker = EmailLocker(email=email, salt=salt)
+ 
+    # TODO: refine this part when if-not-exist supported
+    if EmailLocker.objects(email=email).first():
+        raise ParellelInsertionDetected()
 
-    # query this user back, and check if password part is the same
-    u_back = User.objects(email=email).first()
-    if not u_back:
-        # cassandra didn't insert our object
-        raise DBGenericError('Cassandra did not insert our object: ' + str(email))
-    elif u_back.password != password:
-        # someone else take this user before this operation.
-        raise AlreadyExists('The email is just registered: ' + str(email))
+    try:
+        locker.ttl(conf['CQL_SHORT_TTL']).save()
+
+        # make sure we own the lock
+        if EmailLocker.objects(email=email).first().salt != salt:
+            raise ParellelInsertionDetected()
+
+        User.create(
+            email=email,
+            password=password,
+            gender=gender,
+            bDay=bday,
+            nation=loc,
+            joinTime=joinTime
+        )
+    finally:
+        locker.delete()
 
 
 @shared_task
