@@ -1,10 +1,9 @@
 from __future__ import absolute_import
-from werkzeug.utils import import_string
+from werkzeug.utils import import_string, find_modules
 from os import path
 from datetime import timedelta
 from tornado.ioloop import IOLoop
 from tornado import stack_context
-from werkzeug.utils import find_modules
 from six import string_types
 from miitus import defs
 import hashlib
@@ -31,7 +30,6 @@ class Config(Singleton, dict):
     """
     config object
     """
-
     @staticmethod
     def __gen_task_include(package_name):
         """ scan miitus/srv/tasks folder to include those modules """
@@ -46,13 +44,19 @@ class Config(Singleton, dict):
 
         return ret
 
+    def override_config(self, package_name):
+        """
+        """
+        for name in find_modules(package_name, recursive=True):
+            self.from_object(name)
 
     def __init__(self, package_name=None):
         """ import default config, and apply required patches """
         package_name = package_name or defs.PACKAGE_ROOT
-        config_name = package_name + '.config'
 
-        self.from_object(config_name)
+        self.from_object(package_name + '.config.base')
+        self.from_object(package_name + '.config.patch')
+        self.override_config(package_name + '.config.override')
 
         # import task-modules
         self['CELERY_CONF_CELERY_IMPORTS'].extend(Config.__gen_task_include(defs.TASK_PACKAGE_ROOT))
@@ -67,6 +71,8 @@ class Config(Singleton, dict):
                 self[k] = getattr(obj, k)
 
     def to_dict(self, prefix_filter=None, remove_prefix=True):
+        """
+        """
         if not isinstance(prefix_filter, string_types):
             raise TypeError('only accept str for prefix_filter')
         ret = {}
@@ -80,9 +86,13 @@ class Config(Singleton, dict):
 
 
 def get_static_web_folder():
+    """
+    """
     return path.join(path.join(path.join(path.dirname(path.dirname(path.dirname(__file__))), 'client'), 'web'), 'app')
 
 def get_static_api_doc_folder():
+    """
+    """
     return path.join(path.join(path.dirname(path.dirname(path.dirname(__file__))), 'docs'), 'swagger')
 
 
