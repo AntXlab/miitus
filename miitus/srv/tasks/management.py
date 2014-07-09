@@ -12,6 +12,9 @@ c = Core()
 
 @c.worker.task(time_limit=150)
 def prepare_db():
+    """
+    """
+    global c
 
     # init keyspace
     # TODO: replication-factor:1 is just a dev config

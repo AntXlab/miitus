@@ -14,7 +14,7 @@ seqs = [0] * defs.SEQ_MAX
 wid = 0
 
 def get_wid():
-    global wid
+    global wid, seqs, wid
 
     if not wid:
         salt = c.random()
@@ -62,8 +62,8 @@ def gen_dist_uuid(resource):
         raise ValueError('receive resource-id: ' + str(resource) +\
                 ', when max resource-id is:' + str(defs.SEQ_MAX))
 
-    wid = get_wid()
-    if not wid:
+    wid_local = get_wid()
+    if not wid_local:
         raise WorkerIdInitFailed()
 
     while True:
@@ -79,7 +79,7 @@ def gen_dist_uuid(resource):
             continue
 
         # compose uuid
-        id = wid | (seq << 80) | (t << 96)
+        id = wid_local | (seq << 80) | (t << 96)
         break 
 
     return id

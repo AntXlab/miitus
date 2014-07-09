@@ -16,6 +16,8 @@ def create_new_user(id, email, password, gender, loc, bday, joinTime):
     """
     ret: None
     """
+    global conf, c
+
     # check if this email is already registered
     if User.objects(email=email).first():
         raise AlreadyExists('The email is registered: ' + str(email))
