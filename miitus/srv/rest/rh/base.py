@@ -45,7 +45,7 @@ class RestHandler(BaseHandler):
         super(RestHandler, self).prepare()
 
         content_type = self.request.headers.get('Content-Type')
-        if content_type.startswith('application/json'):
+        if content_type and content_type.startswith('application/json'):
             # handle media-type: json
             if content_type.rfind('charset=UTF-8'):
                 self.json_args = json_decode(self.request.body)

@@ -200,7 +200,7 @@ define([
         $rootScope.user = {};
         // query user-email from server, once queried, which
         // means we've login.
-        RRestangular.all('sessions').get().then(
+        RRestangular.one('sessions').get().then(
             function (data) {
                 if (!!data) {
                     $rootScope.user.email = data.email;
