@@ -1,6 +1,6 @@
 from __future__ import absolute_import
-from tornado.web import RestHandler
 from tornado import gen
+from .base import RestHandler
 from ...tasks import user
 from ...models import User
 from ...utils import UserMixin
