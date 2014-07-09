@@ -3,10 +3,10 @@ from celery import shared_task
 from ..utils import return_exception
 from ..core import Core
 from ..exceptions import WorkerIdInitFailed
-from ..model import Worker
+from ..models import Worker
 from datetime import datetime
 from miitus import defs
-import random, time
+import time
 
 
 c = Core()
@@ -17,10 +17,9 @@ def get_wid():
     global wid
 
     if not wid:
-        r = random.SystemRandom(time.time())
-        salt = r.random()
+        salt = c.random()
         while True:
-            id = r.random()
+            id = c.random() & ((1 << 16) - 1)
             # check if this id is already used.
             exist = Worker.objects(id=id).first()
             if exist:

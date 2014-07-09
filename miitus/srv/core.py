@@ -4,6 +4,7 @@ from cqlengine import connection
 from itsdangerous import URLSafeTimedSerializer
 from .utils import Singleton, Config, Hasher
 from miitus import defs
+import random, time
 
 
 @worker_process_init.connect
@@ -50,6 +51,8 @@ class Core(Singleton):
             # in 0.16.
             _init_db_connection()
 
+        self.__random = random.SystemRandom(time.time())
+
     @property
     def worker(self):
         """
@@ -70,6 +73,13 @@ class Core(Singleton):
         get hasher
         """
         return self.__hasher
+
+    @property
+    def random(self):
+        """
+        get a random number
+        """
+        return self.__random.random()
 
 
 class Serializer(object):
