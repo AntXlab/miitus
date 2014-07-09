@@ -43,7 +43,7 @@
                     "method": "POST",
                     "summary": "Create a new user",
                     "notes": "",
-                    "type": "void",
+                    "type": "User",
                     "nickname": "sign_up",
                     "authorizations": {},
                     "parameters": [
@@ -70,6 +70,10 @@
             "id": "User",
             "name": "User",
             "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "UUID of this user"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -83,14 +87,14 @@
                 },
                 "bday": {
                     "type": "string",
-                    "format": "date-time"
+                    "format": "date"
                 },
                 "dtype": {
                     "type": "string"
                 }
             },
             "required": [
-                "email", "gender", "loc", "bday"
+                "email", "gender", "loc", "bday", "dtype"
             ],
             "discriminator": "dtype",
             "subTypes": ["UserWithPassword"]
