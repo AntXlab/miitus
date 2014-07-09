@@ -9,7 +9,7 @@
         {
             "path": "/users",
             "description": "CRUD of users"
-        },
+        }
     ],
     "authorizations": {
         "session": {

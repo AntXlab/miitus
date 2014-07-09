@@ -29,7 +29,7 @@
                         {
                             "code": 401,
                             "message": "Unauthorized"
-                        },
+                        }
                     ]
                 },
                 {
@@ -52,22 +52,22 @@
                         {
                             "code": 401,
                             "message": "Invalid Password Or Email"
-                        },
+                        }
                     ]
                 }
             ]
-        },
+        }
     ],
     "models": {
         "Cred": {
             "id": "Cred",
             "properties": {
-                "email: {
-                    "type": "string",
+                "email": {
+                    "type": "string"
                 },
                 "password": {
-                    "type": "string",
-                },
+                    "type": "string"
+                }
             }
         }
     }

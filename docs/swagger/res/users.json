@@ -31,9 +31,9 @@
                         {
                             "code": 401,
                             "message": "Unauthorized"
-                        },
+                        }
                     ]
-                },
+                }
             ]
         },
         {
@@ -59,7 +59,7 @@
                         {
                             "code": 409,
                             "message": "User already exists"
-                        },
+                        }
                     ]
                 }
             ]
@@ -71,7 +71,7 @@
             "name": "User",
             "properties": {
                 "email": {
-                    "type": "string",
+                    "type": "string"
                 },
                 "gender": {
                     "type": "integer",
