@@ -59,8 +59,34 @@
         }
     ],
     "models": {
+        "User": {
+            "id": "User",
+            "name": "User",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "UUID of this user"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "loc": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "bday": {
+                    "type": "string",
+                    "format": "date"
+                }
+            }
+        },
         "Cred": {
             "id": "Cred",
+            "name": "Cred",
             "properties": {
                 "email": {
                     "type": "string"
