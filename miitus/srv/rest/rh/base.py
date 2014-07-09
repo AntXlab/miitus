@@ -132,6 +132,7 @@ class UserMixin(object):
         """
         if not hasattr(self, '__user_cookie_duration'):
             self.__user_cookie_duration = Config()['USER_COOKIE_DURATION']
+            self.__token_cookie_duration = Config()['TOKEN_COOKIE_DURATION']
 
         if not isinstance(user_obj, dict):
             raise TypeError('user_obj should be dict')
@@ -140,7 +141,9 @@ class UserMixin(object):
             raise ValueError('password or email is missing in user-obj:' + str(user_obj))
 
         # set token
-        self.core.serializer.dumps([user_obj['email'], user_obj['password']])
+        self.set_secure_cookie('token',
+            self.core.serializer.dumps([user_obj['email'], user_obj['password']]),
+            expires_days=self.__token_cookie_duration)
 
         # make sure we won't send raw password through the wire.
         user_obj.pop('password', None)
