@@ -8,5 +8,5 @@ class Worker(Model):
 
     let each worker has an distributed unique id.
     """
-    id = columns.Integer(primary_key=True)
+    id = columns.Integer(primary_key=True, required=True)
     salt = columns.BigInt(required=True)
