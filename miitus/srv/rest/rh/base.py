@@ -1,14 +1,13 @@
 from __future__ import absolute_import
 from os import path
 from tornado.web import RequestHandler, HTTPError, StaticFileHandler
-from tornado.escape import json_decode
+from tornado.escape import json_decode, json_encode
 from ...core import Core
-from ...utils import CeleryResultMixin
+from ...utils import CeleryResultMixin, Config
 from miitus import defs
 
 import traceback
 import six
-
 
 
 class BaseHandler(RequestHandler, CeleryResultMixin):
@@ -121,4 +120,34 @@ class SwaggerJsonFileHandler(StaticFileHandler):
         if len(url_path) == 0:
             return 'resource_list.json'
         return path.join('res', (url_path + '.json'))
+
+
+class UserMixin(object):
+    """
+    """
+    def login_user(self, user_obj):
+        """
+        login user,
+        note we usually use shorter expired day than normal token
+        """
+        if not hasattr(self, '__user_cookie_duration'):
+            self.__user_cookie_duration = Config()['USER_COOKIE_DURATION']
+
+        if not isinstance(user_obj, dict):
+            raise TypeError('user_obj should be dict')
+
+        if not ('email' in user_obj and 'password' in user_obj):
+            raise ValueError('password or email is missing in user-obj:' + str(user_obj))
+
+        # set token
+        self.core.serializer.dumps([user_obj['email'], user_obj['password']])
+
+        # make sure we won't send raw password through the wire.
+        user_obj.pop('password', None)
+        self.set_secure_cookie('user', json_encode(user_obj), expires_days=self.__user_cookie_duration)
+
+    def logout_user(self):
+        """ logout user """
+        self.clear_cookie('user')
+        self.clear_cookie('token')
 

@@ -4,7 +4,6 @@ from os import path
 from datetime import timedelta
 from tornado.ioloop import IOLoop
 from tornado import stack_context
-from tornado.escape import json_encode
 from werkzeug.utils import find_modules
 from six import string_types
 from miitus import defs
@@ -142,36 +141,6 @@ def return_exception(t):
             return e
 
     return inner
-
-
-class UserMixin(object):
-    """
-    """
-    def login_user(self, user_obj):
-        """
-        login user,
-        note we usually use shorter expired day than normal token
-        """
-        if not hasattr(self, '__user_cookie_duration'):
-            self.__user_cookie_duration = Config()['USER_COOKIE_DURATION']
-
-        if not isinstance(user_obj, dict):
-            raise TypeError('user_obj should be dict')
-
-        if not ('email' in user_obj and 'password' in user_obj):
-            raise ValueError('password or email is missing in user-obj:' + str(user_obj))
-
-        # set token
-        self.core.serializer.dumps([user_obj['email'], user_obj['password']])
-
-        # make sure we won't send raw password through the wire.
-        user_obj.pop('password', None)
-        self.set_secure_cookie('user', json_encode(user_obj), expires_days=self.__user_cookie_duration)
-
-    def logout_user(self):
-        """ logout user """
-        self.clear_cookie('user')
-        self.clear_cookie('token')
 
 
 class ModelHelperMixin(object):

@@ -1,9 +1,8 @@
 from __future__ import absolute_import
 from tornado import gen
-from .base import RestHandler
+from .base import RestHandler, UserMixin
 from ...tasks import user
 from ...models import User
-from ...utils import UserMixin
 from miitus.srv import exceptions
 from miitus.srv.rest import err
 
