@@ -2,8 +2,9 @@ from __future__ import absolute_import
 from tornado import gen
 from datetime import datetime
 from .base import RestHandler, UserMixin
-from ...tasks import user
+from ...tasks import user, utils
 from ...models import User
+from miitus import defs
 from miitus.srv import exceptions
 from miitus.srv.rest import err
 
@@ -31,7 +32,9 @@ class UserResource(RestHandler, UserMixin):
             # would raise ValidationError is not valid
             u.validate()
 
-            t = (user.create_new_user.si(u.email, u.password, u.gender, u.nation, u.bDay, u.joinTime) |\
+            t = (
+                utils.gen_dist_uuid(defs.SEQ_USER) |\
+                user.create_new_user.s(u.email, u.password, u.gender, u.nation, u.bDay, u.joinTime) |\
                 user.check_user_password.si(u.email, u.password)
             ).delay()
 
