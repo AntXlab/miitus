@@ -15,8 +15,8 @@ class User(Model, ModelHelperMixin):
     we would kept them in other table
     """
     id = columns.UUID(primary_key=True)
-    email = columns.Text(max_length=255, required=True)
-    password = columns.Bytes(required=True)
+    email = columns.Text(max_length=255, required=True, index=True)
+    password = columns.Text(required=True)
     gender = columns.Integer()
     bDay = columns.Date()
     nation = columns.Integer()
@@ -42,4 +42,5 @@ class EmailLocker(Model):
     to make sure no one else is inserting the same email
     """
     email = columns.Text(max_length=255, required=True, primary_key=True)
-    salt = columns.Integer()
+    salt = columns.BigInt()
+

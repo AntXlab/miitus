@@ -38,6 +38,7 @@ def create_new_user(id, email, password, gender, loc, bday, joinTime):
             raise ParellelInsertionDetected()
 
         User.create(
+            id=id,
             email=email,
             password=password,
             gender=gender,

@@ -6,7 +6,7 @@ from ..exceptions import WorkerIdInitFailed
 from ..models import Worker
 from datetime import datetime
 from miitus import defs
-import time
+import time, uuid
 
 
 c = Core()
@@ -19,7 +19,7 @@ def get_wid():
     if not wid:
         salt = c.random()
         while True:
-            id = c.random() & ((1 << 16) - 1)
+            id = c.random(scale=(1 << 16) - 1)
             # check if this id is already used.
             exist = Worker.objects(id=id).first()
             if exist:
@@ -82,4 +82,5 @@ def gen_dist_uuid(resource):
         id = wid_local | (seq << 80) | (t << 96)
         break 
 
-    return id
+    return uuid.UUID(int=id)
+

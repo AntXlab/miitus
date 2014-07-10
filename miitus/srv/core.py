@@ -74,12 +74,11 @@ class Core(Singleton):
         """
         return self.__hasher
 
-    @property
-    def random(self):
+    def random(self, scale=((1 << 32) - 1), base=0):
         """
         get a random number
         """
-        return self.__random.random()
+        return int(self.__random.random() * scale) + base
 
 
 class Serializer(object):
@@ -89,10 +88,10 @@ class Serializer(object):
         self.__serializer = URLSafeTimedSerializer(secret)
 
     def loads(self, token):
-        return self.__serializer(token, max_age=self.__max_age)
+        return self.__serializer.loads(token, max_age=self.__max_age)
 
     def dumps(self, data):
-        return self.__serializer(data)
+        return self.__serializer.dumps(data)
 
 # for celery worker
 __celery_app = Core().worker

@@ -32,9 +32,9 @@ class UserResource(RestHandler, UserMixin):
             # would raise ValidationError is not valid
             u.validate()
 
+            u.id = yield gen.Task(self.wait_for_result, utils.gen_dist_uuid.si(defs.SEQ_USER))
             t = (
-                utils.gen_dist_uuid(defs.SEQ_USER) |\
-                user.create_new_user.s(u.email, u.password, u.gender, u.nation, u.bDay, u.joinTime) |\
+                user.create_new_user.s(u.id, u.email, u.password, u.gender, u.nation, u.bDay, u.joinTime) |\
                 user.check_user_password.si(u.email, u.password)
             ).delay()
 
