@@ -4,10 +4,7 @@ from tornado.web import RequestHandler, HTTPError, StaticFileHandler
 from tornado.escape import json_decode, json_encode
 from ...core import Core
 from ...utils import CeleryResultMixin, Config
-from miitus import defs
-
-import traceback
-import six
+from restless.tnd import TornadoResource
 
 
 class BaseHandler(RequestHandler, CeleryResultMixin):
@@ -36,10 +33,6 @@ class RestHandler(BaseHandler):
     """
     Overrided Part
     """
-    def initialize(self):
-        super(RestHandler, self).initialize()
-        self.__init_envelope()
-
     def prepare(self):
         """
         According to FAQ of tornado, they won't handle json media-type.
@@ -54,63 +47,13 @@ class RestHandler(BaseHandler):
             else:
                 raise HTTPError('unsupported application type:' + content_type)
 
-    def write_error(self, status_code, **kwargs):
-        # almost identical to original procedure in tornaod, except
-        # that we need to write error into envelope first.
-        if self.settings.get('serve_traceback') and 'exc_info' in kwargs:
-            self.add_err({'msg': traceback.format_exception(*kwargs['exc_info'])})
-        else:
-            self.add_err({'code': status_code, 'msg': self._reason})
 
-        self.finish()
-
-    def flush(self, include_footers=False, callback=None):
-        self.flush_objs()
-        return super(RestHandler, self).flush(include_footers, callback)
-
-
+class BaseResource(TornadoResource):
     """
-    New internal func
     """
-    def __init_envelope(self):
-        self.__rest_envelope = {}
-        self.push_obj('meta', {
-            'version': defs.REST_VERSION
-            })
 
-    """
-    New API
-    """
-    def add_err(self, err):
-        errs = self.pop_obj(defs.REST_ERR_OBJ_NAME) or []
-        errs.append(err)
-        self.push_obj(defs.REST_ERR_OBJ_NAME, errs)
+    _request_handler_base_ = RestHandler
 
-    def pop_obj(self, key):
-        return self.__rest_envelope.pop(key, None)
-
-    def push_obj(self, key, obj):
-        if key and isinstance(key, six.string_types):
-            if key in self.__rest_envelope:
-                original = self.__rest_envelope[key]
-                if isinstance(original, dict) and isinstance(obj, dict):
-                   original.update(obj)
-                elif isinstance(original, list) and isinstance(obj, list):
-                   original.append(obj)
-                else:
-                    self.__rest_envelope[key] = obj
-            else:
-                self.__rest_envelope[key] = obj
-        else:
-            raise TypeError('Invalid key type: ' + type(key))
-
-    def flush_objs(self, key=None, obj=None):
-        if key and isinstance(key, six.string_types):
-            self.__rest_envelope[key] = obj
-
-        if len(self.__rest_envelope) > 1:
-            self.write(self.__rest_envelope)
-            self.__init_envelope()
 
 
 class SwaggerJsonFileHandler(StaticFileHandler):
@@ -132,6 +75,7 @@ class UserMixin(object):
         """
         if not hasattr(self, '__user_cookie_duration'):
             self.__user_cookie_duration = Config()['USER_COOKIE_DURATION']
+        if not hasattr(self, '__token_cookie_duration'):
             self.__token_cookie_duration = Config()['TOKEN_COOKIE_DURATION']
 
         if not isinstance(user_obj, dict):
@@ -141,13 +85,13 @@ class UserMixin(object):
             raise ValueError('password or email is missing in user-obj:' + str(user_obj))
 
         # set token
-        self.set_secure_cookie('token',
+        self.r_handler.set_secure_cookie('token',
             self.core.serializer.dumps([user_obj['email'], user_obj['password']]),
             expires_days=self.__token_cookie_duration)
 
         # make sure we won't send raw password through the wire.
         user_obj.pop('password', None)
-        self.set_secure_cookie('user', json_encode(user_obj), expires_days=self.__user_cookie_duration)
+        self.r_handler.set_secure_cookie('user', json_encode(user_obj), expires_days=self.__user_cookie_duration)
 
     def logout_user(self):
         """ logout user """

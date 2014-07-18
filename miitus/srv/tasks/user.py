@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from celery import shared_task
+from restless.exceptions import Unauthorized
 from ..exceptions import AlreadyExists, NotExists, ParellelInsertionDetected
 from ..models import User, EmailLocker
 from ..utils import return_exception, Config
@@ -56,11 +57,13 @@ def check_user_password(email, password):
     """
     check password, note that the password should be hashed.
 
-    ret: True is check passed.
+    ret: user object if password is correct.
     """
     u = User.objects(email=email).first()
     if u:
-        return u.password == password
+        if u.password == password:
+            return u
+        raise Unauthorized()
     else:
         raise NotExists()
 

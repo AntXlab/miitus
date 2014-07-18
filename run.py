@@ -1,4 +1,5 @@
 import tornado.ioloop
+import miitus.libs # init libs
 from miitus.srv.rest.app import App
 from miitus.srv.tasks import management
 from miitus.srv.core import Core

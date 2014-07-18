@@ -1,4 +1,5 @@
 from tornado.web import Application, RequestHandler, StaticFileHandler
+from restless import tnd
 from werkzeug.utils import find_modules, import_string
 from miitus import defs
 from miitus.srv import utils
@@ -13,8 +14,16 @@ class App(utils.Singleton):
     @staticmethod
     def __gen_route(kls):
         ret = []
-        for path in kls.__route__:
-            ret.append((path, kls))
+        if issubclass(kls, RequestHandler):
+            for p in getattr(kls, defs.ROUTE_ATTR_NAME):
+                ret.append((p, kls))
+        elif issubclass(kls, tnd.TornadoResource):
+            for r in getattr(kls, defs.ROUTE_ATTR_NAME):
+                if r[1] == 'list':
+                    ret.append((r[0], kls.as_list()))
+                elif r[1] == 'detail':
+                    ret.append((r[0], kls.as_detail()))
+
         return ret
 
     @staticmethod
@@ -32,7 +41,7 @@ class App(utils.Singleton):
             mod = import_string(name)
             for item_name in dir(mod):
                 item = getattr(mod, item_name)
-                if type(item) == type and issubclass(item, RequestHandler) and hasattr(item, defs.ROUTE_ATTR_NAME):
+                if type(item) == type and hasattr(item, defs.ROUTE_ATTR_NAME):
                     ret.extend(App.__gen_route(item))
 
         return ret
