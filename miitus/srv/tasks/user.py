@@ -1,9 +1,8 @@
 from __future__ import absolute_import
 from celery import shared_task
-from restless.exceptions import Unauthorized
 from ..exceptions import Conflict, NotExists, ParellelInsertionDetected
 from ..models import User, EmailLocker
-from ..utils import return_exception, Config
+from ..utils import Config
 from ..core import Core
 
 
@@ -12,7 +11,7 @@ conf = Config()
 
 
 @shared_task
-def create_new_user(id, email, password, gender, loc, b_day, joinTime):
+def create_new_user(id, email, password, gender, nation, b_day, joinTime):
     """
     ret: None
     """
@@ -43,7 +42,7 @@ def create_new_user(id, email, password, gender, loc, b_day, joinTime):
             password=password,
             gender=gender,
             b_day=b_day,
-            nation=loc,
+            nation=nation,
             joinTime=joinTime
         )
     finally:

@@ -30,7 +30,7 @@ class UserResource(BaseResource, UserMixin):
             email=self.r_handler.json_args.get('email'),
             password=self.core.hasher(self.r_handler.json_args.get('password')),
             gender=self.r_handler.json_args.get('gender'),
-            nation=self.r_handler.json_args.get('loc'),
+            nation=self.r_handler.json_args.get('nation'),
             b_day=datetime.strptime(self.r_handler.json_args.get('b_day'), '%Y-%m-%d'),
             joinTime=datetime.now()
         )

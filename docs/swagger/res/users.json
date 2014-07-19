@@ -81,7 +81,7 @@
                     "type": "integer",
                     "format": "int32"
                 },
-                "loc": {
+                "nation": {
                     "type": "integer",
                     "format": "int32"
                 },
@@ -91,17 +91,13 @@
                 }
             },
             "required": [
-                "email", "gender", "loc", "b_day"
+                "email", "gender", "nation", "b_day"
             ]
         },
         "UserWithPassword": {
             "id": "UserWithPassword",
             "name": "UserWithPassword",
             "properties": {
-                "id": {
-                    "type": "string",
-                    "description": "UUID of this user"
-                },
                 "email": {
                     "type": "string"
                 },
@@ -109,7 +105,7 @@
                     "type": "integer",
                     "format": "int32"
                 },
-                "loc": {
+                "nation": {
                     "type": "integer",
                     "format": "int32"
                 },

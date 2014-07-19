@@ -17,7 +17,7 @@ define(['angular'], function (ng) {
                 email: $scope.sign_up_info.email,
                 password: $scope.sign_up_info.login_psswd,
                 gender: $scope.sign_up_info.gender_sel,
-                loc: countryInfo.get_code($scope.sign_up_info.country_name),
+                nation: countryInfo.get_code($scope.sign_up_info.country_name),
                 bday: $scope.sign_up_info.bday,
             }).then(
                 function(data) {
