@@ -16,6 +16,7 @@ SEQ_TIMESTAMP = 0
 SEQ_USER = 1
 SEQ_MAX = 2
 
-STATIC_WEB_URL_PREFIX = r'/s/(.*)'
-STATIC_APIDOC_URL_PREFIX = r'/api-doc/?(.*)'
+STATIC_WEB_URL_PREFIX = '/s/'
+STATIC_WEB_URL_FILTER = r'/s/(.*)'
+STATIC_APIDOC_URL_FILTER = r'/api-doc/?(.*)'
 

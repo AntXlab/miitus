@@ -51,9 +51,9 @@ class App(utils.Singleton):
         c = utils.Config().to_dict(defs.TORNADO_CONFIG_PREFIX)
         if c['debug']:
             # serve static files from tornado directly
-            r.append((defs.STATIC_WEB_URL_PREFIX, StaticFileHandler, {"path": utils.get_static_web_folder()}))
+            r.append((defs.STATIC_WEB_URL_FILTER, StaticFileHandler, {"path": utils.get_static_web_folder()}))
             r.append((
-                defs.STATIC_APIDOC_URL_PREFIX,
+                defs.STATIC_APIDOC_URL_FILTER,
                 SwaggerJsonFileHandler,
                 {"path": utils.get_static_api_doc_folder()}
             ))
