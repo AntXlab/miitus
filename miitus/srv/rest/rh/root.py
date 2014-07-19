@@ -8,7 +8,7 @@ class Root(RequestHandler):
     when accessing root: '/'
     """
     
-    __route__ = ['/']
+    __mts_route__ = ['/']
 
     def get(self):
         self.redirect(defs.STATIC_WEB_URL_PREFIX + defs.INDEX_PAGE)
