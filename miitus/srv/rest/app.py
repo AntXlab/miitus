@@ -3,7 +3,7 @@ from restless.tnd import TornadoResource
 from werkzeug.utils import find_modules, import_string
 from miitus import defs
 from miitus.srv import utils
-from .rh.base import SwaggerJsonFileHandler
+from .base import SwaggerJsonFileHandler
 
 
 class App(utils.Singleton):

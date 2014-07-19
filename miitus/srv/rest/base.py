@@ -2,8 +2,8 @@ from __future__ import absolute_import
 from os import path
 from tornado.web import RequestHandler, HTTPError, StaticFileHandler
 from tornado.escape import json_decode
-from ...core import Core
-from ...utils import CeleryResultMixin, Config, json_encode
+from ..core import Core
+from ..utils import CeleryResultMixin, Config, json_encode
 from restless.tnd import TornadoResource
 
 

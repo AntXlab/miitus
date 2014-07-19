@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from tornado import gen
 from datetime import datetime
 from restless.preparers import FieldsPreparer
-from .base import BaseResource, UserMixin
+from ..base import BaseResource, UserMixin
 from ...tasks import user, utils
 from ...models import User
 from miitus import defs

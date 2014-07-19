@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from tornado import gen
 from restless.exceptions import Unauthorized
 from restless.preparers import FieldsPreparer
-from .base import BaseResource, UserMixin
+from ..base import BaseResource, UserMixin
 from ...tasks import user
 from ...models import User
 
