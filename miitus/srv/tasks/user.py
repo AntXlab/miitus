@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from celery import shared_task
 from restless.exceptions import Unauthorized
-from ..exceptions import AlreadyExists, NotExists, ParellelInsertionDetected
+from ..exceptions import Conflict, NotExists, ParellelInsertionDetected
 from ..models import User, EmailLocker
 from ..utils import return_exception, Config
 from ..core import Core
@@ -12,8 +12,7 @@ conf = Config()
 
 
 @shared_task
-@return_exception
-def create_new_user(id, email, password, gender, loc, bday, joinTime):
+def create_new_user(id, email, password, gender, loc, b_day, joinTime):
     """
     ret: None
     """
@@ -21,7 +20,7 @@ def create_new_user(id, email, password, gender, loc, bday, joinTime):
 
     # check if this email is already registered
     if User.objects(email=email).first():
-        raise AlreadyExists('The email is registered: ' + str(email))
+        raise Conflict()
 
     # creat locker instance
     salt=c.random()
@@ -43,7 +42,7 @@ def create_new_user(id, email, password, gender, loc, bday, joinTime):
             email=email,
             password=password,
             gender=gender,
-            bDay=bday,
+            b_day=b_day,
             nation=loc,
             joinTime=joinTime
         )
@@ -52,7 +51,6 @@ def create_new_user(id, email, password, gender, loc, bday, joinTime):
 
 
 @shared_task
-@return_exception
 def check_user_password(email, password):
     """
     check password, note that the password should be hashed.
@@ -61,9 +59,7 @@ def check_user_password(email, password):
     """
     u = User.objects(email=email).first()
     if u:
-        if u.password == password:
-            return u
-        raise Unauthorized()
+        return u.password == password
     else:
         raise NotExists()
 

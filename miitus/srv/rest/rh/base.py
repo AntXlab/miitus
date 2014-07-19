@@ -1,9 +1,9 @@
 from __future__ import absolute_import
 from os import path
 from tornado.web import RequestHandler, HTTPError, StaticFileHandler
-from tornado.escape import json_decode, json_encode
+from tornado.escape import json_decode
 from ...core import Core
-from ...utils import CeleryResultMixin, Config
+from ...utils import CeleryResultMixin, Config, json_encode
 from restless.tnd import TornadoResource
 
 
@@ -13,7 +13,6 @@ class BaseHandler(RequestHandler, CeleryResultMixin):
     """
     def initialize(self):
         super(BaseHandler, self).initialize()
-        self.core = Core()
 
     def get_current_user(self):
         """ get current user from session """
@@ -51,9 +50,15 @@ class RestHandler(BaseHandler):
 class BaseResource(TornadoResource):
     """
     """
-
     _request_handler_base_ = RestHandler
 
+    def __init__(self, *args, **kwargs):
+        super(BaseResource, self).__init__(*args, **kwargs)
+        self.core = Core()
+
+    def is_authenticated(self):
+        """ use tornado's authentication instead """
+        return True
 
 
 class SwaggerJsonFileHandler(StaticFileHandler):

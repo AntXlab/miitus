@@ -1,5 +1,6 @@
-class AlreadyExists(Exception):
-    pass
+class Conflict(Exception):
+    status = 409
+    message = ''
 
 class NotExists(Exception):
     pass

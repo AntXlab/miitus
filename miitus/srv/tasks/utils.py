@@ -41,7 +41,6 @@ def get_wid():
  
 
 @shared_task
-@return_exception
 def gen_dist_uuid(resource):
     """
     generate universal unique uuid. refer to link below for more details

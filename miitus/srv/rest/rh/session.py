@@ -17,7 +17,7 @@ class Session(BaseResource, UserMixin):
         'id': 'id',
         'email': 'email',
         'gender': 'gender',
-        'bday': 'bday',
+        'b_day': 'b_day',
         'nation': 'nation'
     })
 
@@ -39,7 +39,7 @@ class Session(BaseResource, UserMixin):
         """
         u = User(
             email=self.r_handler.json_args.get('email'),
-            password=self.r_handler.core.hasher(self.json_args.get('password')),
+            password=self.core.hasher(self.json_args.get('password')),
         )
 
         # would raise ValidationError is not valid

@@ -1,5 +1,5 @@
 from tornado.web import Application, RequestHandler, StaticFileHandler
-from restless import tnd
+from restless.tnd import TornadoResource
 from werkzeug.utils import find_modules, import_string
 from miitus import defs
 from miitus.srv import utils
@@ -17,7 +17,7 @@ class App(utils.Singleton):
         if issubclass(kls, RequestHandler):
             for p in getattr(kls, defs.ROUTE_ATTR_NAME):
                 ret.append((p, kls))
-        elif issubclass(kls, tnd.TornadoResource):
+        elif issubclass(kls, TornadoResource):
             for r in getattr(kls, defs.ROUTE_ATTR_NAME):
                 if r[1] == 'list':
                     ret.append((r[0], kls.as_list()))

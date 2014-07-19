@@ -8,6 +8,8 @@ from six import string_types
 from miitus import defs
 import hashlib
 import functools
+import json
+import uuid
 
 
 class _Singleton(type):
@@ -164,3 +166,17 @@ class ModelHelperMixin(object):
         """
         return self._as_dict()
 
+
+class __UUIDEncoder(json.JSONEncoder):
+    """ json encoder for UUID """
+    def default(self, o):
+        if isinstance(o, uuid.UUID):
+            return o.hex
+        return json.JSONDecoder.default(self, o)
+
+
+def json_encode(value):
+    """ json encode a python object """
+    # please refer to tornado.escape.json_encode,
+    # what we add here is a customization to UUID support
+    return json.dumps(value, cls=__UUIDEncoder).replace("</", "<\\/")

@@ -1,3 +1,4 @@
+import miitus.libs # init libs
 from cqlengine.management import delete_keyspace
 from miitus.srv.core import Core
 from miitus import defs

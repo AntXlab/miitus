@@ -18,7 +18,7 @@ class User(Model, ModelHelperMixin):
     email = columns.Text(max_length=255, required=True, index=True)
     password = columns.Text(required=True)
     gender = columns.Integer()
-    bDay = columns.Date()
+    b_day = columns.Date()
     nation = columns.Integer()
 
     # TODO: other static use another model?

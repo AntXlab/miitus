@@ -85,13 +85,13 @@
                     "type": "integer",
                     "format": "int32"
                 },
-                "bday": {
+                "b_day": {
                     "type": "string",
                     "format": "date"
                 }
             },
             "required": [
-                "email", "gender", "loc", "bday"
+                "email", "gender", "loc", "b_day"
             ]
         },
         "UserWithPassword": {
@@ -113,7 +113,7 @@
                     "type": "integer",
                     "format": "int32"
                 },
-                "bday": {
+                "b_day": {
                     "type": "string",
                     "format": "date"
                 },
