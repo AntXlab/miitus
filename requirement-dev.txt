@@ -1,5 +1,4 @@
 -r requirement.txt
--r miitus/libs/cqlengine/requirements-dev.txt
 
 pudb==2014.1
 
