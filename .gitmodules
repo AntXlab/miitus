@@ -2,7 +2,3 @@
 	path = miitus/libs/restless
 	url = https://github.com/mission-liao/restless.git
 	branch = miitus
-[submodule "miitus/libs/cqlengine"]
-	path = miitus/libs/cqlengine
-	url = https://github.com/mission-liao/cqlengine.git
-	branch = miitus

@@ -4,6 +4,7 @@ itsdangerous>=0.24
 tornado>=3.2.2
 validate-email>=1.2
 SQLAlchemy>=0.9.6
+cqlengine>=0.16.0
 
 -r miitus/libs/cqlengine/requirements.txt
 -r miitus/libs/restless/requirements.txt
