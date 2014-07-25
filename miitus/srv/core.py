@@ -10,6 +10,20 @@ from miitus import defs
 import random, time
 
 
+class Serializer(object):
+    """
+    Serializer, wrapper for itsdangerous.
+    """
+    def __init__(self, secret, max_age):
+        self.__max_age = max_age
+        self.__serializer = URLSafeTimedSerializer(secret)
+
+    def loads(self, token):
+        return self.__serializer.loads(token, max_age=self.__max_age)
+
+    def dumps(self, data):
+        return self.__serializer.dumps(data)
+
 
 class Core(Singleton):
     """
@@ -36,7 +50,6 @@ class Core(Singleton):
         # init sqlalchemy
         self.__sql_base = declarative_base()
         self.__sql_session = None
-
 
     @property
     def worker(self):
@@ -83,18 +96,6 @@ class Core(Singleton):
     def sql_session(self, v):
         self.__sql_session = v
 
-
-class Serializer(object):
-
-    def __init__(self, secret, max_age):
-        self.__max_age = max_age
-        self.__serializer = URLSafeTimedSerializer(secret)
-
-    def loads(self, token):
-        return self.__serializer.loads(token, max_age=self.__max_age)
-
-    def dumps(self, data):
-        return self.__serializer.dumps(data)
 
 # proxy for celery worker
 __celery_app = Core().worker
