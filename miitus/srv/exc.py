@@ -1,4 +1,4 @@
-class Conflict(Exception):
+class ConflictError(Exception):
     status = 409
     message = ''
 
@@ -15,8 +15,5 @@ class PasswordWrong(Exception):
     pass
 
 class WorkerIdInitFailed(Exception):
-    pass
-
-class ParellelInsertionDetected(Exception):
     pass
 
