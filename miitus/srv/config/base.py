@@ -10,6 +10,10 @@ CELERY_CONF_CELERY_CHORD_PROPAGATES = True
 CQLENGINE_HOSTS = ['127.0.0.1']
 CQL_SHORT_TTL = 16
 
+# sqlalchemy
+SQLALCHEMY_URL = 'sqlite:///test.db'
+SQLALCHEMY_ECHO = True
+
 # tornado
 TORNADO_xsrf_cookie = True
 
