@@ -5,5 +5,6 @@ tornado>=3.2.2
 validate-email>=1.2
 SQLAlchemy>=0.9.6
 cqlengine>=0.16.0
+blist>=1.3.6
 
 -r miitus/libs/restless/requirements.txt
