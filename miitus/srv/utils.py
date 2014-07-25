@@ -10,6 +10,7 @@ import hashlib
 import functools
 import json
 import uuid
+import contextlib
 
 
 class _Singleton(type):
@@ -86,6 +87,11 @@ class Config(Singleton, dict):
                     ret[k] = self[k]
         return ret
 
+    def __getattr__(self, attr):
+        """ access dict as object, readonly """
+        return self[attr]
+
+
 
 def get_static_web_folder():
     """
@@ -155,7 +161,7 @@ def return_exception(t):
     return inner
 
 
-class ModelHelperMixin(object):
+class CQLHelperMixin(object):
     """
     """
     def to_dict(self):
@@ -165,6 +171,21 @@ class ModelHelperMixin(object):
         in the future, I would roll one on my own.
         """
         return self._as_dict()
+
+
+class SQLHelperMixin(object):
+    """
+    """
+    def to_dict(self):
+        """
+        """
+        ret = {}
+
+        for k in self.__table__.columns.keys():
+            ret[k] = getattr(self, k, None)
+            # TODO: handle relationship
+
+        return ret
 
 
 class __UUIDEncoder(json.JSONEncoder):

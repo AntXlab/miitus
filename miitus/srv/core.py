@@ -22,14 +22,14 @@ class Core(Singleton):
         conf = Config()
 
         self.__app = Celery(
-            conf['CELERY_MAIN_NAME'],
-            broker=conf['CELERY_BROKER_URL'],
-            backend=conf['CELERY_BACKEND_URL']
+            conf.CELERY_MAIN_NAME,
+            broker=conf.CELERY_BROKER_URL,
+            backend=conf.CELERY_BACKEND_URL
         )
 
         self.__app.config_from_object(conf.to_dict(prefix_filter=defs.CELERY_CONFIG_PREFIX))
-        self.__serializer = Serializer(conf['TOKEN_SECRET_KEY'], conf['MAX_AGE'])
-        self.__hasher = Hasher(conf['HASH_SECRET_KEY'])
+        self.__serializer = Serializer(conf.TOKEN_SECRET_KEY, conf.MAX_AGE)
+        self.__hasher = Hasher(conf.HASH_SECRET_KEY)
 
         self.__random = random.SystemRandom(time.time())
 
@@ -116,10 +116,10 @@ def _init_db_connection(**kwargs):
 
     # this callback can't execute longer than 4 seconds, or would be interrupted by
     # celery
-    connection.setup(hosts=conf['CQLENGINE_HOSTS'], default_keyspace=defs.CQL_KEYSPACE_NAME)
+    connection.setup(hosts=conf.CQLENGINE_HOSTS, default_keyspace=defs.CQL_KEYSPACE_NAME)
 
     # sqlalchemy
-    core.sql_session = sessionmaker(create_engine(conf['SQL_URL'], echo=conf['SQLALCHEMY_ECHO']))
+    core.sql_session = sessionmaker(create_engine(conf.SQLALCHEMY_URL, echo=conf.SQLALCHEMY_ECHO))
 
 
 def handle_celery_eagar():
