@@ -2,9 +2,11 @@ from __future__ import absolute_import
 from os import path
 from tornado.web import RequestHandler, HTTPError, StaticFileHandler
 from tornado.escape import json_decode
-from ..core import Core
+from ..core import Runtime
 from ..utils import CeleryResultMixin, Config, json_encode
 from restless.tnd import TornadoResource
+from miitus.srv import exc
+import sqlalchemy.exc
 
 
 class BaseHandler(RequestHandler, CeleryResultMixin):
@@ -54,11 +56,26 @@ class BaseResource(TornadoResource):
 
     def __init__(self, *args, **kwargs):
         super(BaseResource, self).__init__(*args, **kwargs)
-        self.core = Core()
+        self.runtime = Runtime()
 
     def is_authenticated(self):
         """ use tornado's authentication instead """
         return True
+
+    def build_error(self, err):
+        """
+        method to convert internal error to http error
+        """
+        err = self.__convert_exception(err) if not self.is_debug() else err
+        return super(BaseResource, self).build_error(err)
+
+    @staticmethod
+    def __convert_exception(err):
+        """
+        normalize exceptions
+        """
+        if isinstance(err, sqlalchemy.exc.IntegrityError):
+            return exc.ConflictError()
 
 
 class SwaggerJsonFileHandler(StaticFileHandler):
@@ -78,10 +95,12 @@ class UserMixin(object):
         login user,
         note we usually use shorter expired day than normal token
         """
+        conf = Config()
         if not hasattr(self, '__user_cookie_duration'):
-            self.__user_cookie_duration = Config()['USER_COOKIE_DURATION']
+            self.__user_cookie_duration = conf.USER_COOKIE_DURATION
         if not hasattr(self, '__token_cookie_duration'):
-            self.__token_cookie_duration = Config()['TOKEN_COOKIE_DURATION']
+            self.__token_cookie_duration = conf.TOKEN_COOKIE_DURATION
+
 
         if not isinstance(user_obj, dict):
             raise TypeError('user_obj should be dict')
@@ -89,14 +108,16 @@ class UserMixin(object):
         if not ('email' in user_obj and 'password' in user_obj):
             raise ValueError('password or email is missing in user-obj:' + str(user_obj))
 
+        local_obj = user_obj.copy()
+
         # set token
         self.r_handler.set_secure_cookie('token',
-            self.core.serializer.dumps([user_obj['email'], user_obj['password']]),
+            self.core.serializer.dumps([local_obj['email'], local_obj['password']]),
             expires_days=self.__token_cookie_duration)
 
         # make sure we won't send raw password through the wire.
-        user_obj.pop('password', None)
-        self.r_handler.set_secure_cookie('user', json_encode(user_obj), expires_days=self.__user_cookie_duration)
+        local_obj.pop('password', None)
+        self.r_handler.set_secure_cookie('user', json_encode(local_obj), expires_days=self.__user_cookie_duration)
 
     def logout_user(self):
         """ logout user """

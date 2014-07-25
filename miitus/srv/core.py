@@ -3,9 +3,9 @@ from celery.signals import worker_process_init
 from cqlengine import connection
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 from itsdangerous import URLSafeTimedSerializer
 from .utils import Singleton, Config, Hasher
+from .prep import Preparation
 from miitus import defs
 import random, time
 
@@ -25,7 +25,7 @@ class Serializer(object):
         return self.__serializer.dumps(data)
 
 
-class Core(Singleton):
+class Runtime(Singleton):
     """
     containing everything needs one-time initialization
     """
@@ -33,6 +33,8 @@ class Core(Singleton):
     def __init__(self):
         """
         """
+        super(Runtime, self).__init__()
+
         conf = Config()
 
         self.__app = Celery(
@@ -47,9 +49,8 @@ class Core(Singleton):
 
         self.__random = random.SystemRandom(time.time())
 
-        # init sqlalchemy
-        self.__sql_base = declarative_base()
-        self.__sql_session = None
+        # sqlalchemy
+        self.__sql_engine = create_engine(conf.SQLALCHEMY_URL, echo=conf.SQLALCHEMY_ECHO)
 
     @property
     def worker(self):
@@ -79,11 +80,11 @@ class Core(Singleton):
         return int(self.__random.random() * scale) + base
 
     @property
-    def Base(self):
+    def sql_engine(self):
         """
-        get declarative_base of sqlalchemy
+        get return of create_engine
         """
-        return self.__sql_base
+        return self.__sql_engine
 
     @property
     def sql_session(self):
@@ -98,7 +99,7 @@ class Core(Singleton):
 
 
 # proxy for celery worker
-__celery_app = Core().worker
+__celery_app = Runtime().worker
 
 
 @worker_process_init.connect
@@ -113,14 +114,20 @@ def _init_db_connection(**kwargs):
     of child process by fork.
     """
     conf = Config()
-    core = Core()
 
     # this callback can't execute longer than 4 seconds, or would be interrupted by
     # celery
     connection.setup(hosts=conf.CQLENGINE_HOSTS, default_keyspace=defs.CQL_KEYSPACE_NAME)
 
     # sqlalchemy
-    core.sql_session = sessionmaker(create_engine(conf.SQLALCHEMY_URL, echo=conf.SQLALCHEMY_ECHO))
+    rt = Runtime()
+    rt.sql_session = sessionmaker(rt.sql_engine)
+
+    # trigger registration of SQLAlchemy models
+    from models import sql
+
+    # create tables
+    Preparation().Base.metadata.create_all(rt.sql_engine)
 
 
 def handle_celery_eagar():

@@ -1,15 +1,14 @@
 from __future__ import absolute_import
 from celery import shared_task
-from ..utils import return_exception
-from ..core import Core
+from ..core import Runtime
 from ..exceptions import WorkerIdInitFailed
-from ..models import Worker
+from ..models.sql import Worker
 from datetime import datetime
 from miitus import defs
 import time, uuid
 
 
-c = Core()
+rt = Runtime()
 seqs = [0] * defs.SEQ_MAX
 wid = 0
 
@@ -17,9 +16,9 @@ def get_wid():
     global wid, seqs, wid
 
     if not wid:
-        salt = c.random()
+        salt = rt.random()
         while True:
-            id = c.random(scale=(1 << 16) - 1)
+            id = rt.random(scale=(1 << 16) - 1)
             # check if this id is already used.
             exist = Worker.objects(id=id).first()
             if exist:

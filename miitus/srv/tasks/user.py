@@ -1,52 +1,24 @@
 from __future__ import absolute_import
 from celery import shared_task
-from ..exceptions import Conflict, NotExists, ParellelInsertionDetected
-from ..models import User, EmailLocker
-from ..utils import Config
-from ..core import Core
+from ..utils import session_scope
+from ..core import Runtime
+from ..models.sql import User
 
 
-c = Core()
-conf = Config()
+rt = Runtime()
 
 
 @shared_task
-def create_new_user(id, email, password, gender, nation, b_day, joinTime):
+def create_new_user(usr_obj):
     """
     ret: None
     """
-    global conf, c
+    global rt 
 
-    # check if this email is already registered
-    if User.objects(email=email).first():
-        raise Conflict()
+    with session_scope(rt.sql_session) as s:
+        s.add(User(**usr_obj))
 
-    # creat locker instance
-    salt=c.random()
-    locker = EmailLocker(email=email, salt=salt)
- 
-    # TODO: refine this part when if-not-exist supported
-    if EmailLocker.objects(email=email).first():
-        raise ParellelInsertionDetected()
-
-    try:
-        locker.ttl(conf['CQL_SHORT_TTL']).save()
-
-        # make sure we own the lock
-        if EmailLocker.objects(email=email).first().salt != salt:
-            raise ParellelInsertionDetected()
-
-        User.create(
-            id=id,
-            email=email,
-            password=password,
-            gender=gender,
-            b_day=b_day,
-            nation=nation,
-            joinTime=joinTime
-        )
-    finally:
-        locker.delete()
+    # TODO: once successed, create a real referenced model in cassandra.
 
 
 @shared_task
@@ -56,9 +28,5 @@ def check_user_password(email, password):
 
     ret: user object if password is correct.
     """
-    u = User.objects(email=email).first()
-    if u:
-        return u.password == password
-    else:
-        raise NotExists()
+    raise NotImplementedError()
 

@@ -4,7 +4,7 @@ from restless.exceptions import Unauthorized
 from restless.preparers import FieldsPreparer
 from ..base import BaseResource, UserMixin
 from ...tasks import user
-from ...models import User
+from ...models.sql import User
 
 
 class Session(BaseResource, UserMixin):
@@ -39,7 +39,7 @@ class Session(BaseResource, UserMixin):
         """
         u = User(
             email=self.r_handler.json_args.get('email'),
-            password=self.core.hasher(self.json_args.get('password')),
+            password=self.runtime.hasher(self.json_args.get('password')),
         )
 
         # would raise ValidationError is not valid

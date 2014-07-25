@@ -6,7 +6,7 @@ ROUTE_ATTR_NAME = '__mts_route__'
 REST_VERSION = '0.0.0.1'
 REST_ERR_OBJ_NAME = 'err'
 TASK_PACKAGE_ROOT = 'miitus.srv.tasks'
-MODEL_PACKAGE_ROOT = 'miitus.srv.models'
+MODEL_PACKAGE_ROOT = 'miitus.srv.models.cql'
 CQL_KEYSPACE_NAME = 'miitus'
 
 CELERY_ALWAYS_EAGER = CELERY_CONFIG_PREFIX + 'CELERY_ALWAYS_EAGER'

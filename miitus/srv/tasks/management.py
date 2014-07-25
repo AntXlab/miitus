@@ -1,16 +1,14 @@
 from __future__ import absolute_import
 from werkzeug.utils import find_modules, import_string
+from celery import shared_task
 from cqlengine import Model
 from cqlengine.management import sync_table, create_keyspace
 from cqlengine.models import ModelMetaClass
 from miitus import defs
-from ..core import Core
 
 
-c = Core()
 
-
-@c.worker.task(time_limit=150)
+@shared_task(time_limit=150)
 def prepare_db():
     """
     """
