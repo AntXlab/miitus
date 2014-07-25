@@ -201,3 +201,23 @@ def json_encode(value):
     # please refer to tornado.escape.json_encode,
     # what we add here is a customization to UUID support
     return json.dumps(value, cls=__UUIDEncoder).replace("</", "<\\/")
+
+
+@contextlib.contextmanager
+def session_scope(session_factory):
+    """
+    From SQLAlchemy tutorial,
+    Provide a transactional scope around a series of operations.
+
+        http://docs.sqlalchemy.org/en/latest/orm/session.html#unitofwork-contextual
+    """
+    session = session_factory()
+    try:
+        yield session
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
