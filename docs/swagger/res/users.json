@@ -51,7 +51,7 @@
                             "name": "body",
                             "description": "email belongs to the user",
                             "required": true,
-                            "type": "UserWithPassword",
+                            "type": "UserCred",
                             "paramType": "body"
                         }
                     ],
@@ -94,31 +94,19 @@
                 "email", "gender", "nation", "b_day"
             ]
         },
-        "UserWithPassword": {
-            "id": "UserWithPassword",
-            "name": "UserWithPassword",
+        "UserCred": {
+            "id": "UserCred",
+            "name": "UserCred",
             "properties": {
                 "email": {
                     "type": "string"
-                },
-                "gender": {
-                    "type": "integer",
-                    "format": "int32"
-                },
-                "nation": {
-                    "type": "integer",
-                    "format": "int32"
-                },
-                "b_day": {
-                    "type": "string",
-                    "format": "date"
                 },
                 "password": {
                     "type": "string"
                 }
             },
             "required": [
-                "password"
+                "email", "password"
             ]
         }
     }
