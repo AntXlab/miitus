@@ -204,7 +204,7 @@ def json_encode(value):
 
 
 @contextlib.contextmanager
-def session_scope(session_factory):
+def session_scope(session_factory, expire=True):
     """
     From SQLAlchemy tutorial,
     Provide a transactional scope around a series of operations.
@@ -212,6 +212,7 @@ def session_scope(session_factory):
         http://docs.sqlalchemy.org/en/latest/orm/session.html#unitofwork-contextual
     """
     session = session_factory()
+    session.expire_on_commit = expire
     try:
         yield session
         session.commit()

@@ -112,7 +112,7 @@ class UserMixin(object):
 
         # set token
         self.r_handler.set_secure_cookie('token',
-            self.core.serializer.dumps([local_obj['email'], local_obj['password']]),
+            self.runtime.serializer.dumps([local_obj['email'], local_obj['password']]),
             expires_days=self.__token_cookie_duration)
 
         # make sure we won't send raw password through the wire.

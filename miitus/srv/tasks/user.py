@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from celery import shared_task
 from ..utils import session_scope
 from ..core import Runtime
-from ..models.sql import User
+from ..models import sql, cql
 
 
 rt = Runtime()
@@ -15,11 +15,18 @@ def create_new_user(usr_obj):
     """
     global rt 
 
-    with session_scope(rt.sql_session) as s:
-        s.add(User(**usr_obj))
+    # insert into sql to make sure uniqueness
+    u = sql.User(**usr_obj)
+    with session_scope(rt.sql_session, expire=False) as s:
+        s.add(u)
 
-    # TODO: once successed, create a real referenced model in cassandra.
+    # update return value
+    usr_obj.update(id=u.id)
 
+    # duplicate a record in cassandra
+    cql.User.create(**usr_obj)
+
+    return usr_obj
 
 @shared_task
 def check_user_password(email, password):
@@ -28,5 +35,7 @@ def check_user_password(email, password):
 
     ret: user object if password is correct.
     """
+    global rt
+
     raise NotImplementedError()
 
