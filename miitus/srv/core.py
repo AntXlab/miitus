@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from itsdangerous import URLSafeTimedSerializer
 from .utils import Singleton, Config, Hasher
 from .prep import Preparation
-from miitus import defs
+from miitus import const
 import random, time
 
 
@@ -43,7 +43,7 @@ class Runtime(Singleton):
             backend=conf.CELERY_BACKEND_URL
         )
 
-        self.__app.config_from_object(conf.to_dict(prefix_filter=defs.CELERY_CONFIG_PREFIX))
+        self.__app.config_from_object(conf.to_dict(prefix_filter=const.CELERY_CONFIG_PREFIX))
         self.__serializer = Serializer(conf.TOKEN_SECRET_KEY, conf.MAX_AGE)
         self.__hasher = Hasher(conf.HASH_SECRET_KEY)
 
@@ -117,7 +117,7 @@ def _init_db_connection(**kwargs):
 
     # this callback can't execute longer than 4 seconds, or would be interrupted by
     # celery
-    connection.setup(hosts=conf.CQLENGINE_HOSTS, default_keyspace=defs.CQL_KEYSPACE_NAME)
+    connection.setup(hosts=conf.CQLENGINE_HOSTS, default_keyspace=const.CQL_KEYSPACE_NAME)
 
     # sqlalchemy
     rt = Runtime()
@@ -133,7 +133,7 @@ def _init_db_connection(**kwargs):
 def handle_celery_eagar():
     conf = Config()
 
-    if defs.CELERY_ALWAYS_EAGER in conf and conf[defs.CELERY_ALWAYS_EAGER] == True:
+    if const.CELERY_ALWAYS_EAGER in conf and conf[const.CELERY_ALWAYS_EAGER] == True:
         # TODO: better way to handle this case is lazy-loading, however, it's 
         # a feature not merged to master branch of cqlegine, would be merged
         # in 0.16.

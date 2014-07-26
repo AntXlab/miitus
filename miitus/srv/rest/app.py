@@ -1,7 +1,7 @@
 from tornado.web import Application, RequestHandler, StaticFileHandler
 from restless.tnd import TornadoResource
 from werkzeug.utils import find_modules, import_string
-from miitus import defs
+from miitus import const
 from miitus.srv import utils
 from .base import SwaggerJsonFileHandler
 
@@ -15,10 +15,10 @@ class App(utils.Singleton):
     def __gen_route(kls):
         ret = []
         if issubclass(kls, RequestHandler):
-            for p in getattr(kls, defs.ROUTE_ATTR_NAME):
+            for p in getattr(kls, const.ROUTE_ATTR_NAME):
                 ret.append((p, kls))
         elif issubclass(kls, TornadoResource):
-            for r in getattr(kls, defs.ROUTE_ATTR_NAME):
+            for r in getattr(kls, const.ROUTE_ATTR_NAME):
                 if r[1] == 'list':
                     ret.append((r[0], kls.as_list()))
                 elif r[1] == 'detail':
@@ -41,19 +41,19 @@ class App(utils.Singleton):
             mod = import_string(name)
             for item_name in dir(mod):
                 item = getattr(mod, item_name)
-                if type(item) == type and hasattr(item, defs.ROUTE_ATTR_NAME):
+                if type(item) == type and hasattr(item, const.ROUTE_ATTR_NAME):
                     ret.extend(App.__gen_route(item))
 
         return ret
 
     def __init__(self, package_name=None):
         r = App.__routes(package_name)
-        c = utils.Config().to_dict(defs.TORNADO_CONFIG_PREFIX)
+        c = utils.Config().to_dict(const.TORNADO_CONFIG_PREFIX)
         if c['debug']:
             # serve static files from tornado directly
-            r.append((defs.STATIC_WEB_URL_FILTER, StaticFileHandler, {"path": utils.get_static_web_folder()}))
+            r.append((const.STATIC_WEB_URL_FILTER, StaticFileHandler, {"path": utils.get_static_web_folder()}))
             r.append((
-                defs.STATIC_APIDOC_URL_FILTER,
+                const.STATIC_APIDOC_URL_FILTER,
                 SwaggerJsonFileHandler,
                 {"path": utils.get_static_api_doc_folder()}
             ))

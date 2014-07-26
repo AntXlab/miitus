@@ -5,7 +5,7 @@ from datetime import timedelta
 from tornado.ioloop import IOLoop
 from tornado import stack_context
 from six import string_types
-from miitus import defs
+from miitus import const
 import hashlib
 import functools
 import json
@@ -55,14 +55,14 @@ class Config(Singleton, dict):
 
     def __init__(self, package_name=None):
         """ import default config, and apply required patches """
-        package_name = package_name or defs.PACKAGE_ROOT
+        package_name = package_name or const.PACKAGE_ROOT
 
         self.from_object(package_name + '.config.base')
         self.from_object(package_name + '.config.patch')
         self.override_config(package_name + '.config.override')
 
         # import task-modules
-        self['CELERY_CONF_CELERY_IMPORTS'].extend(Config.__gen_task_include(defs.TASK_PACKAGE_ROOT))
+        self['CELERY_CONF_CELERY_IMPORTS'].extend(Config.__gen_task_include(const.TASK_PACKAGE_ROOT))
 
     def from_object(self, obj):
         """

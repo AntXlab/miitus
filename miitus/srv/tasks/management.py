@@ -4,7 +4,7 @@ from celery import shared_task
 from cqlengine import Model
 from cqlengine.management import sync_table, create_keyspace
 from cqlengine.models import ModelMetaClass
-from miitus import defs
+from miitus import const
 
 
 
@@ -16,10 +16,10 @@ def prepare_db():
 
     # init keyspace
     # TODO: replication-factor:1 is just a dev config
-    create_keyspace(defs.CQL_KEYSPACE_NAME, replication_factor=1)
+    create_keyspace(const.CQL_KEYSPACE_NAME, replication_factor=1)
 
     # sync table
-    for name in find_modules(defs.MODEL_PACKAGE_ROOT, recursive=True):
+    for name in find_modules(const.MODEL_PACKAGE_ROOT, recursive=True):
         mod = import_string(name)
         for item_name in dir(mod):
             item = getattr(mod, item_name)

@@ -1,19 +1,21 @@
 from __future__ import absolute_import
 from celery import shared_task
 from ..core import Runtime
+from ..util import Config
 from ..exceptions import WorkerIdInitFailed
 from ..models.sql import Worker
 from datetime import datetime
-from miitus import defs
+from miitus import const
 import time, uuid
 
 
 rt = Runtime()
-seqs = [0] * defs.SEQ_MAX
+conf = Config()
+seqs = [0] * const.SEQ_MAX
 wid = 0
 
 def get_wid():
-    global wid, seqs, wid
+    global wid, seqs, wid, conf
 
     if not wid:
         salt = rt.random()
@@ -28,7 +30,7 @@ def get_wid():
             Worker.create(id=id, salt=salt)
 
             # sleep a while
-            time.sleep(1)
+            time.sleep(conf.WORKER_GET_ID_INTERVAL)
 
             # make sure we are the owner of that record
             back_check = Worker.objects(id=id).first()
@@ -56,9 +58,9 @@ def gen_dist_uuid(resource):
     """
     global seqs
 
-    if resource >= defs.SEQ_MAX:
+    if resource >= const.SEQ_MAX:
         raise ValueError('receive resource-id: ' + str(resource) +\
-                ', when max resource-id is:' + str(defs.SEQ_MAX))
+                ', when max resource-id is:' + str(const.SEQ_MAX))
 
     wid_local = get_wid()
     if not wid_local:
@@ -67,12 +69,12 @@ def gen_dist_uuid(resource):
     while True:
         # see if we need to reset
         t = int((datetime.now() - datetime(1970, 1, 1)).total_seconds())
-        if seqs[defs.SEQ_TIMESTAMP] != t:
-            seqs = [0] * defs.SEQ_MAX
-            seqs[defs.SEQ_TIMESTAMP] = t
+        if seqs[const.SEQ_TIMESTAMP] != t:
+            seqs = [0] * const.SEQ_MAX
+            seqs[const.SEQ_TIMESTAMP] = t
 
         seqs[resource] = seq = seqs[resource] + 1
-        if seq > defs.MAX_SEQ_NUM:
+        if seq > const.MAX_SEQ_NUM:
             time.sleep(1)
             continue
 
