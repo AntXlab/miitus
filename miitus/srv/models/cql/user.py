@@ -2,16 +2,17 @@ from __future__ import absolute_import
 from cqlengine import Model, columns
 from cqlengine import exceptions
 from validate_email import validate_email
+from ...utils import CQLHelperMixin
 
 
-class User(Model):
+class User(Model, CQLHelperMixin):
     """
     class User
 
     only kept static information here. For dynamic info, ex. last-login,
     we would kept them in other table
     """
-    id = columns.Integer(primary_key=True, required=True)
+    id = columns.Integer(primary_key=True)
     email = columns.Text(max_length=255, required=True, index=True)
     password = columns.Text(required=True)
     gender = columns.Integer(default=0)

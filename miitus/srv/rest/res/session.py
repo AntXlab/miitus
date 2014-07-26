@@ -4,7 +4,7 @@ from restless.exceptions import Unauthorized
 from restless.preparers import FieldsPreparer
 from ..base import BaseResource, UserMixin
 from ...tasks import user
-from ...models.sql import User
+from ...models.cql import User
 
 
 class Session(BaseResource, UserMixin):
@@ -39,18 +39,20 @@ class Session(BaseResource, UserMixin):
         """
         u = User(
             email=self.r_handler.json_args.get('email'),
-            password=self.runtime.hasher(self.json_args.get('password')),
+            password=self.runtime.hasher(self.r_handler.json_args.get('password')),
         )
 
         # would raise ValidationError is not valid
         u.validate()
 
-        t = user.check_user_password(u.email, u.password).delay()
-        u = yield gen.Task(self.r_handler.wait_for_result, t)
+        t = user.check_user_password.si(u.email, u.password).delay()
+        ret = yield gen.Task(self.r_handler.wait_for_result, t)
 
-        if u:
-            self.login_user(u.to_dict())
-            raise gen.Return(u)
+        if ret:
+            self.login_user(ret)
+            raise gen.Return(ret)
+        else:
+            raise Unauthorized()
 
     def delete_list(self):
         """

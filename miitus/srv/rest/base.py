@@ -7,6 +7,7 @@ from ..utils import CeleryResultMixin, Config, json_encode
 from restless.tnd import TornadoResource
 from miitus.srv import exc
 import sqlalchemy.exc
+import restless.exceptions
 
 
 class BaseHandler(RequestHandler, CeleryResultMixin):
@@ -76,6 +77,8 @@ class BaseResource(TornadoResource):
         """
         if isinstance(err, sqlalchemy.exc.IntegrityError):
             return exc.ConflictError()
+        elif isinstance(err, exc.UserNotFound):
+            raise restless.exceptions.NotFound()
 
 
 class SwaggerJsonFileHandler(StaticFileHandler):

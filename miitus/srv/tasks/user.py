@@ -3,6 +3,7 @@ from celery import shared_task
 from ..utils import session_scope
 from ..core import Runtime
 from ..models import sql, cql
+from miitus.srv import exc
 
 
 rt = Runtime()
@@ -13,7 +14,7 @@ def create_new_user(usr_obj):
     """
     ret: None
     """
-    global rt 
+    global rt
 
     # insert into sql to make sure uniqueness
     u = sql.User(**usr_obj)
@@ -35,7 +36,9 @@ def check_user_password(email, password):
 
     ret: user object if password is correct.
     """
-    global rt
+    u = cql.User.objects(email=email).first()
+    if u:
+        return u.to_dict() if u.password == password else None
 
-    raise NotImplementedError()
+    raise exc.UserNotFound()
 
