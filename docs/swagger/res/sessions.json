@@ -74,11 +74,11 @@
                     "type": "integer",
                     "format": "int32"
                 },
-                "loc": {
+                "nation": {
                     "type": "integer",
                     "format": "int32"
                 },
-                "bday": {
+                "b_day": {
                     "type": "string",
                     "format": "date"
                 }
