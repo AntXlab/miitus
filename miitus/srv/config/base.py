@@ -12,7 +12,7 @@ CQL_SHORT_TTL = 16
 
 # sqlalchemy
 SQLALCHEMY_URL = 'sqlite:///test.db'
-SQLALCHEMY_ECHO = True
+SQLALCHEMY_ECHO = False
 
 # tornado
 TORNADO_xsrf_cookie = True
@@ -21,3 +21,6 @@ TORNADO_xsrf_cookie = True
 MAX_AGE = 21
 USER_COOKIE_DURATION = 3
 TOKEN_COOKIE_DURATION = 14
+
+# worker
+WORKER_GET_ID_INTERVAL = 3
