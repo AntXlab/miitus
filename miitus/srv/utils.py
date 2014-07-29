@@ -25,6 +25,9 @@ class Singleton(_Singleton('SingletonMeta', (object,), {})):
     """
     a singleton implementation, refer to
         http://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
+
+    objects inside should be thread-safe, because this class didn't provide that
+    promise.
     """
     pass
 

@@ -27,7 +27,7 @@ class Serializer(object):
 
 class Runtime(Singleton):
     """
-    containing everything needs one-time initialization
+    containing everything needs one-time initialization and encapsulated.
     """
 
     def __init__(self):
