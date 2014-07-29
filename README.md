@@ -5,7 +5,7 @@ A platform for massive group discussion(targeting more than **1000+** people at 
 - next generation voting-like opinion gathering mechanism.
  
 ##Contents
-- [Development](https://github.com/mission-liao/miitus/edit/master/README.md#Development)
+- [Development](https://github.com/AntXlab/piicebee/edit/master/README.md#Development)
 
 ---------
 
@@ -19,7 +19,7 @@ bower install
 
 prepare for server development
 ```bash
-pip install -r requirement.txt
+pip install -r requirement-dev.txt
 ```
 
 Other dependencies
@@ -36,3 +36,15 @@ Start worker
 ```bash
 celery -A miitus.srv.tasks worker --app=miitus.srv.core:__celery_app --loglevel=info --autoreload
 ```
+
+Server side testing
+```bash
+py.test -s -v --cov=miitus --cov-report=html miitus/tests
+```
+
+Client side code build
+```bash
+grunt build
+```
+You will find a dist folder under client/web/
+
